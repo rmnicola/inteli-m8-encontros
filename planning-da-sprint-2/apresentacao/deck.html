@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M8 EC - Planning da Sprint 2</title>
+<link rel="stylesheet" href="../../.design-system/css/inteli-exec.css">
+<style>
+/* Estilos sob medida deste deck. Cada slide sob medida tem um id e só se estiliza por ele. */
+.slide.capa .titulo-capa { white-space: nowrap; font-size: 72px; }
+
+/* #retro: Que bom, Que pena e Que tal em três colunas, uma por passo */
+#retro .colunas { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 270px; bottom: 290px;
+  display: flex; gap: 40px; align-items: stretch; }
+#retro .coluna { flex: 1; background: var(--branco); border-radius: 24px; padding: 48px 40px 56px; border-top: 14px solid var(--cor); }
+#retro .coluna.bom { --cor: var(--verde); }
+#retro .coluna.pena { --cor: var(--coral); }
+#retro .coluna.tal { --cor: var(--roxo); }
+#retro .coluna h2 { font-family: var(--f-capitulo); font-size: 64px; line-height: 1.05; margin-bottom: 24px; white-space: nowrap; }
+#retro .coluna p { font-size: 36px; line-height: 1.3; }
+
+/* #ficha: a ficha como recorte de papel, à esquerda; à direita, o QR code para baixá-la */
+#ficha .recorte { position: absolute; left: 170px; top: 50px; width: 560px; transform: rotate(-2deg);
+  filter: drop-shadow(0 18px 36px rgba(46, 38, 64, .28)); }
+#ficha .recorte img { display: block; width: 100%; height: auto;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 98%, 87% 94.5%, 79% 99%, 71% 95.5%, 63% 98.5%, 55% 94.5%, 47% 99%, 39% 95.5%, 31% 98.5%, 23% 94.5%, 15% 99%, 7% 95.5%, 0 98.5%); }
+#ficha .acesso { position: absolute; left: 900px; right: var(--margem-x); top: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: 36px; }
+#ficha .acesso .qr { width: 300px; height: 300px; background: var(--branco); padding: 24px; border-radius: 16px; }
+#ficha .acesso .qr img { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+#ficha .acesso .passos { font-size: 40px; font-weight: 700; line-height: 1.3; }
+
+/* .recorte-doc com .folha: o card de um artefato (HTML como no Adalove) recortado, com a parte que importa nítida e o resto desfocado */
+.recorte-doc { --fundo: var(--cinza-medio); }
+.recorte-doc .recorte { position: absolute; left: 260px; top: 70px; width: 1080px; transform: rotate(-2deg);
+  filter: drop-shadow(0 18px 36px rgba(46, 38, 64, .28)); }
+.recorte-doc .folha.objeto { position: static; box-shadow: none; }
+.recorte-doc .folha { background: #ffffff; color: #2e2640; font-family: var(--f-texto); font-size: 24px; line-height: 1.45;
+  padding: 50px 70px 80px; max-height: 760px; overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 98%, 87% 94.5%, 79% 99%, 71% 95.5%, 63% 98.5%, 55% 94.5%, 47% 99%, 39% 95.5%, 31% 98.5%, 23% 94.5%, 15% 99%, 7% 95.5%, 0 98.5%); }
+.recorte-doc .folha h2 { font-size: 40px; font-weight: 700; line-height: 1.15; margin-bottom: 18px; }
+.recorte-doc .folha h3 { font-size: 28px; font-weight: 700; margin: 20px 0 6px; }
+.recorte-doc .folha p { margin-bottom: 10px; }
+.recorte-doc .folha .desfocado { filter: blur(3px); opacity: .6; }
+
+/* .semana: tabela dos encontros de uma semana */
+.semana .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.semana table { position: absolute; left: var(--margem-x); width: 1360px; top: 200px; border-collapse: collapse; font-size: 30px; }
+.semana td { padding: 14px 18px; border-top: 2px solid var(--cinza-medio); vertical-align: middle; }
+.semana tr:first-child td { border-top: 0; }
+.semana .dia { font-family: var(--f-destaque); font-weight: 700; width: 210px; white-space: nowrap; }
+.semana .enc { font-weight: 700; }
+.semana .eixo { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; text-transform: uppercase; color: var(--destaque); width: 260px; text-align: right; }
+.semana .prof { width: 90px; }
+.semana .prof img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; }
+.semana tr.feriado td { color: var(--texto-suave); font-weight: 400; }
+
+/* .linha-sprints: linha do tempo das sprints, a mesma do deck de apresentação do módulo */
+.linha-sprints .trilho { position: absolute; top: 380px; left: 110px; width: 1380px; height: 3px; background: var(--roxo); }
+.linha-sprints .marco { position: absolute; top: 260px; width: 260px; margin-left: -130px; height: 200px; text-align: center; }
+.linha-sprints .marco .nome { position: absolute; top: 30px; left: 0; right: 0; font-family: var(--f-destaque); font-size: 34px; color: var(--texto-suave); }
+.linha-sprints .marco .ponto { position: absolute; top: 108px; left: 50%; width: 26px; height: 26px; margin-left: -13px;
+  border-radius: 50%; background: var(--fundo); border: 4px solid var(--coral); }
+.linha-sprints .marco.feito .ponto { background: var(--coral); }
+.linha-sprints .marco.atual .nome { color: var(--texto); font-weight: 700; }
+.linha-sprints .marco.atual .ponto { width: 40px; height: 40px; margin-left: -20px; top: 101px; }
+.linha-sprints .frase { position: absolute; top: 500px; left: var(--margem-x); right: var(--margem-x); text-align: center;
+  font-weight: 700; font-size: 56px; line-height: 1.15; }
+</style>
+</head>
+<body>
+<main class="deck">
+
+  <section class="slide capa sem-numero">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="conteudo">
+      <h1 class="titulo-capa">M8 EC - Planning da Sprint 2</h1>
+      <p class="autor">Prof. Nicola</p>
+    </div>
+    <aside class="notas">Planning da Sprint 2 (26/10). Primeiro olhamos para trás com a retrospectiva da sprint 1; depois, o que a sprint 2 pede e os encontros até a entrega de 06/11.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="0">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: retrospectiva da sprint 1.</aside>
+  </section>
+
+  <section class="slide" id="retro" data-modelo="tres-colunas">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="colunas">
+      <div class="coluna bom passo" data-passo="0"><h2>Que bom</h2><p>O que funcionou e vale manter</p></div>
+      <div class="coluna pena passo" data-passo="1"><h2>Que pena</h2><p>O que atrapalhou: o fato, não a pessoa</p></div>
+      <div class="coluna tal passo" data-passo="2"><h2>Que tal</h2><p>O que tentar na sprint 2</p></div>
+    </div>
+    <aside class="notas">Retrospectiva da sprint 1 em grupo, em três perguntas. Que bom: o que funcionou e o grupo quer manter. Que pena: o que não funcionou ou atrapalhou; descrever o fato e o efeito, nunca a pessoa. Que tal: propostas concretas para a sprint 2, com um jeito de saber se deu certo. Itens curtos, um fato por campo, não precisa preencher todos. Ligação com o artefato de documentação desta sprint: o grupo registra na retrospectiva o acompanhamento do contrato social (o que foi revisto e o que mudou); a ficha de hoje já é esse registro, e o Que tal vira ponto de partida desta planning.</aside>
+  </section>
+
+  <section class="slide" id="ficha" data-modelo="ficha-com-qr">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="recorte"><img src="assets/ficha-p1.png" alt="Ficha de retrospectiva da Sprint 1"></div>
+    <div class="acesso">
+      <div class="qr"><img src="assets/qr-ficha.png" alt="QR code da ficha"></div>
+      <p class="passos">Uma ficha por grupo: preencham, postem no Slack do grupo e enviem pelo formulário</p>
+    </div>
+    <aside class="notas">O QR code baixa a ficha (PDF preenchível de uma página, uma por grupo), que também está na página deste encontro no site. O grupo conversa e preenche junto, num leitor de PDF, e salva antes de compartilhar: o visualizador do navegador às vezes descarta o que foi digitado. Depois posta o PDF no canal do grupo no Slack, onde ele fica para guiar as próximas plannings, e uma pessoa envia o mesmo PDF pelo formulário (link e QR no fim da ficha; pede login com a conta do Inteli). Combinar o tempo na hora (sugestão: 15 minutos).</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="1">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: sprint 2.</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-sprint-2" data-modelo="linha-do-tempo" data-sprint="2">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 2, com entrega em 06/11: a primeira versão funcional. Interface no tablet com FAQ, consulta de rotas e pedido para o robô ir até um ponto de interesse; o robô é o TurtleBot 3 simulado com o Nav2.</aside>
+  </section>
+
+  <section class="slide recorte-doc" id="artefato-implementacao" data-modelo="recorte-de-jornal">
+    <div class="recorte"><div class="folha objeto">
+      <h2>Artefato de implementação</h2>
+      <h3>Peso</h3><p>6 pontos.</p>
+      <h3>Escopo</h3>
+      <p>O grupo deve entregar uma primeira versão funcional do sistema, composta por interface de usuário, serviço de rotas e integração com um robô em simulação. A interface deve poder ser usada em um tablet e oferecer ao passageiro um FAQ simples, a consulta de rotas na rede CPTM e a opção de solicitar que o robô se desloque até um ponto de interesse.</p>
+      <div class="desfocado">
+        <p>A consulta de rotas deve evoluir a prova de conceito da Sprint 1 e usar um algoritmo de busca em grafos implementado pelo próprio grupo; nesta sprint, não é permitido usar biblioteca para a busca. O FAQ pode ser baseado em uma base fixa de perguntas e respostas, sem uso de modelo de linguagem.</p>
+        <p>A navegação deve usar o Nav2 com o TurtleBot 3 em simulação, deslocando o robô até pontos de interesse definidos em um mapa de teste.</p>
+      </div>
+    </div></div>
+    <aside class="notas">Artefato de implementação (peso 6), texto completo no card do Adalove. Três peças que formam um fluxo só: interface no tablet (FAQ, consulta de rotas, pedido de deslocamento), serviço de rotas e robô simulado. Rotas: evoluir a prova de conceito da sprint 1, agora com busca implementada pelo grupo (sem biblioteca), o que conversa com as aulas de grafos do Murilo (travessia em 30/10, Dijkstra e Prim em 04/11). FAQ com base fixa, sem LLM. Navegação: Nav2 com TurtleBot 3 em simulação até pontos de interesse num mapa de teste; robô físico opcional. A interface fala com o robô por uma interface bem definida (API REST ou mensageria ROS 2): é ela que garante a troca de plataforma robótica nas próximas sprints. Na faixa 9 a 10: fluxo demonstrável de forma consistente, busca justificada, versão estável e limitações explícitas.</aside>
+  </section>
+
+  <section class="slide recorte-doc" id="artefato-documentacao" data-modelo="recorte-de-jornal">
+    <div class="recorte"><div class="folha objeto">
+      <h2>Artefato de documentação</h2>
+      <h3>Peso</h3><p>3 pontos.</p>
+      <h3>Critério de qualidade · [9,0 - 10,0]</h3>
+      <p>O manual permite que uma pessoa de fora do grupo execute o sistema na primeira tentativa, e a documentação diferencia claramente funcionalidades entregues, limitações e próximos passos. Registra o acompanhamento do contrato social na retrospectiva da sprint: o que foi revisto e o que mudou.</p>
+      <div class="desfocado">
+        <p>A documentação reflete fielmente a implementação de forma clara e concisa: descreve interface de usuário, serviço de rotas e navegação, explica o algoritmo de busca escolhido, especifica a interface de comunicação com o robô e inclui evidências.</p>
+      </div>
+    </div></div>
+    <aside class="notas">Artefato de documentação (peso 3). A faixa 9 a 10 pede: refletir a implementação de forma clara e concisa (interface, serviço de rotas, navegação, algoritmo de busca escolhido, interface de comunicação com o robô, evidências); um manual que alguém de fora executa na primeira tentativa; separar o que foi entregue, as limitações e os próximos passos. Novidade desta sprint: registrar o acompanhamento do contrato social na retrospectiva do grupo, ou seja, o que foi revisto e o que mudou. A ficha de hoje é um bom ponto de partida para essa conversa.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="2">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: encontros da sprint 2.</aside>
+  </section>
+
+  <section class="slide semana" id="semana-3" data-modelo="tabela-da-semana" data-max-palavras="55">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Semana 3</h2>
+    <table>
+<tr><td class="dia">seg 26/10</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Planning da Sprint 2</td><td class="eixo">Orientação</td></tr>
+<tr><td class="dia">ter 27/10</td><td class="prof"><img src="assets/equipe/fabiana.jpg" alt=""></td><td class="enc">Revisão de ROS 2 e introdução ao Nav2</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">qua 28/10</td><td class="prof"><img src="assets/equipe/filipe.jpg" alt=""></td><td class="enc">Relações e hierarquias na tomada de decisões</td><td class="eixo">Liderança</td></tr>
+<tr><td class="dia">qui 29/10</td><td class="prof"><img src="assets/equipe/jefferson.jpg" alt=""></td><td class="enc">PLN clássico e representação de texto</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">sex 30/10</td><td class="prof"><img src="assets/equipe/murilo.jpg" alt=""></td><td class="enc">Algoritmos de grafos I: travessia</td><td class="eixo">Computação</td></tr>
+    </table>
+    <aside class="notas">Semana 3 (26 a 30/10). Terça: Revisão de ROS 2 e introdução ao Nav2 (Fabiana), com o autoestudo "Tutorial: ROS 2 e Nav2"; chegar com o ROS 2 Jazzy instalado. Quinta: PLN clássico e representação de texto (Jefferson). Sexta: Algoritmos de grafos I, travessia com DFS e BFS (Murilo), a base da busca de rotas que o grupo implementa nesta sprint.</aside>
+  </section>
+
+  <section class="slide semana" id="semana-4" data-modelo="tabela-da-semana" data-max-palavras="45">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Semana 4</h2>
+    <table>
+<tr class="feriado"><td class="dia">seg 02/11</td><td class="prof"></td><td class="enc">Feriado</td><td class="eixo"></td></tr>
+<tr><td class="dia">ter 03/11</td><td class="prof"><img src="assets/equipe/mariana.jpg" alt=""></td><td class="enc">Feedback sensorial e takeover</td><td class="eixo">Design</td></tr>
+<tr><td class="dia">qua 04/11</td><td class="prof"><img src="assets/equipe/murilo.jpg" alt=""></td><td class="enc">Algoritmos de grafos II: Dijkstra e Prim</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">qui 05/11</td><td class="prof"><img src="assets/equipe/jefferson.jpg" alt=""></td><td class="enc">Word embeddings: word2vec e GloVe</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">sex 06/11</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Entrega da Sprint 2</td><td class="eixo">Orientação</td></tr>
+    </table>
+    <aside class="notas">Semana 4 (02 a 06/11): segunda é feriado. Terça: Herança de interface, feedback sensorial e a dinâmica do takeover (Mariana). Quarta: Algoritmos de grafos II, Dijkstra e Prim (Murilo), para o grafo ponderado das rotas. Quinta: Word embeddings, word2vec e GloVe (Jefferson). Sexta: entrega da sprint 2, com a primeira versão funcional e a documentação.</aside>
+  </section>
+
+</main>
+<script>
+
+/* Fonte única do roadmap: a frase de cada sprint (a mesma do deck de apresentação do módulo). */
+(function () {
+  const SPRINTS = [
+    "Definição do problema e proposta da solução",
+    "FAQ e integração com robô simulado",
+    "Assistente com IA e mapa da estação",
+    "Voz e troca de plataforma robótica",
+    "Validação com usuários e versão final",
+  ];
+  const x = (i) => 250 + i * 275;
+  document.querySelectorAll(".slide.linha-sprints").forEach((sec) => {
+    const atual = parseInt(sec.dataset.sprint, 10);
+    sec.insertAdjacentHTML("beforeend", '<div class="trilho"></div>');
+    SPRINTS.forEach((_, i) => {
+      const n = i + 1;
+      sec.insertAdjacentHTML("beforeend",
+        `<div class="marco${n <= atual ? " feito" : ""}${n === atual ? " atual" : ""}" style="left:${x(i)}px">` +
+        `<p class="nome">Sprint ${n}</p><span class="ponto"></span></div>`);
+    });
+    sec.insertAdjacentHTML("beforeend", `<p class="frase">${SPRINTS[atual - 1]}</p>`);
+  });
+})();
+
+/* Fonte única da agenda: todos os slides .agenda são montados daqui. */
+(function () {
+  const AGENDA = ["Retrospectiva da Sprint 1", "Sprint 2", "Encontros da sprint"];
+  const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
+  document.querySelectorAll(".slide.agenda").forEach((sec) => {
+    const agora = parseInt(sec.dataset.agora, 10);
+    const itens = h("div", "itens");
+    itens.append(h("p", "rotulo-agenda", "Agenda"));
+    AGENDA.forEach((t, i) => {
+      const p = h("p", "item" + (i < agora ? " passou" : i === agora ? " agora" : ""));
+      p.append(h("span", "marcador", String(i + 1).padStart(2, "0")), document.createTextNode(t));
+      itens.append(p);
+    });
+    sec.append(itens);
+  });
+})();
+</script>
+<script src="../../.design-system/js/deck.js"></script>
+</body>
+</html>

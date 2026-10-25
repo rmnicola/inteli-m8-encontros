@@ -20,6 +20,26 @@
           "link": "https://drive.google.com/file/d/1kLuh6e3R_vGkuLnojRLH6Qj-Q2B3zltM/view?usp=sharing"
         }
       ]
+    },
+    {
+      "slug": "planning-da-sprint-2",
+      "pasta": "planning-da-sprint-2",
+      "data": "2026-10-26",
+      "titulo": "Planning da Sprint 2",
+      "subtitulo": "Retrospectiva da Sprint 1, artefatos e encontros da Sprint 2",
+      "apresentacao": "apresentacao/dist/index.html",
+      "roteiros": [
+        {
+          "rotulo": "Ficha de retrospectiva da Sprint 1",
+          "tipo": "PDF preenchível",
+          "arquivo": "ficha-retrospectiva-sprint-1.pdf"
+        },
+        {
+          "rotulo": "Enviar a ficha preenchida",
+          "tipo": "formulário",
+          "link": "https://docs.google.com/forms/d/e/1FAIpQLSfWxDzHo41fDGr-HL0rJHnvAW3DVOX7mjoUIM7xkXina5uN6w/viewform"
+        }
+      ]
     }
   ]
 }
