@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M8 - Navegação autônoma</title>
+<link rel="stylesheet" href="../../.design-system/css/inteli-exec.css">
+<link rel="stylesheet" href="../../.design-system/assets/fonts/objetos/objetos.css">
+<style>
+/* Estilos sob medida deste deck. Cada slide sob medida tem um id e só se estiliza por ele. */
+/* Capa deste deck: título em uma linha só */
+.slide.capa .titulo-capa { white-space: nowrap; font-size: 72px; }
+
+
+
+/* #estacao: a confusão de uma estação (passo 0) e a escala do problema (passo 1) */
+#estacao .logo-parceiro { position: absolute; left: var(--margem-x); top: 56px; height: 64px; }
+#estacao .multidao { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; z-index: 0; }
+#estacao .multidao svg { position: absolute; }
+#estacao .passageiro { position: absolute; left: 470px; top: 420px; width: 200px; z-index: 2; }
+#estacao .duvida { position: absolute; left: 535px; top: 270px; font-family: var(--f-capitulo); font-size: 150px; line-height: 1; color: var(--coral-texto); z-index: 2; }
+#estacao .placa {
+  position: absolute; z-index: 1; background: var(--branco); border: 3px solid var(--roxo); border-radius: 10px;
+  padding: 8px 18px; font-family: var(--f-destaque); font-weight: 700; font-size: 28px; white-space: nowrap;
+}
+#estacao .numero { position: absolute; left: 1060px; right: var(--margem-x); top: 0; bottom: 0; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center; }
+#estacao .numero .grande { font-family: var(--f-capitulo); font-size: 132px; line-height: 1; }
+#estacao .numero .rotulo { font-size: 34px; line-height: 1.3; margin-top: 12px; }
+#estacao[data-estado="1"] .placa { opacity: .45; }
+
+/* #trilhas: as três trilhas de Computação, lado a lado */
+#trilhas .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+#trilhas .colunas { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 220px; bottom: 90px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; }
+#trilhas .trilha-col { background: var(--branco); border-radius: 20px; padding: 40px 40px; display: flex; flex-direction: column; }
+#trilhas .trilha-col img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; }
+#trilhas .trilha-col h3 { font-size: 44px; font-weight: 700; margin: 24px 0 18px; }
+#trilhas .trilha-col li { list-style: none; font-size: 32px; line-height: 1.3; padding: 10px 0; border-top: 2px solid var(--cinza-claro); }
+
+/* .estante: as capas dos livros de uma trilha, cada uma é um link (principal maior que as alternativas) */
+.estante .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.estante .capas { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 190px; bottom: 70px;
+  display: flex; align-items: center; justify-content: center; gap: 64px; }
+.estante .capas a { display: block; line-height: 0; }
+.estante .capas img { height: 420px; width: auto; box-shadow: 0 18px 50px rgba(46, 38, 64, .22); outline: 1px solid var(--cinza-medio); }
+.estante .capas a.principal img { height: 580px; }
+
+/* .recorte-doc: um documento nosso como recorte de papel (borda de baixo rasgada, inclinado, com sombra),
+   no espírito de #jornal-1958 do deck de IA do Exec. A parte de baixo da imagem já vem desfocada.
+   Usado em #diario e #desafio-1. */
+.recorte-doc { --fundo: var(--cinza-medio); }
+.recorte-doc .recorte { position: absolute; left: 350px; top: 160px; width: 900px; transform: rotate(-2deg);
+  filter: drop-shadow(0 18px 36px rgba(46, 38, 64, .28)); }
+.recorte-doc .recorte a { display: block; line-height: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 98%, 87% 94.5%, 79% 99%, 71% 95.5%, 63% 98.5%, 55% 94.5%, 47% 99%, 39% 95.5%, 31% 98.5%, 23% 94.5%, 15% 99%, 7% 95.5%, 0 98.5%); }
+.recorte-doc .recorte img { display: block; width: 100%; height: auto; }
+#desafio-1 .recorte { transform: rotate(1.5deg); }
+
+/* #nota-individual: a fórmula (passo 0) e o FP aberto numa barra proporcional aos pesos (passo 1) */
+#nota-individual .formula { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 170px;
+  display: flex; justify-content: center; align-items: flex-start; gap: 36px; }
+#nota-individual .termo-f { text-align: center; }
+#nota-individual .termo-f .v { font-weight: 700; font-size: 64px; line-height: 1.1; }
+#nota-individual .termo-f .faixa { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; color: var(--destaque); margin-top: 8px; }
+#nota-individual .op { font-weight: 300; font-size: 64px; line-height: 1.1; color: var(--texto-suave); }
+#nota-individual .barra { position: absolute; left: 330px; right: var(--margem-x); top: 440px; height: 190px; display: flex; border-radius: 14px; overflow: hidden; }
+#nota-individual .fp-igual { position: absolute; left: var(--margem-x); width: 190px; top: 440px; height: 190px; display: flex; align-items: center;
+  font-weight: 700; font-size: 64px; }
+/* passo 1: o FP da fórmula ganha a moldura coral, ligando-o à barra */
+#nota-individual .termo-fp .v { padding: 0 14px; border: 4px solid transparent; border-radius: 10px; transition: border-color .3s; }
+#nota-individual[data-estado="1"] .termo-fp .v { border-color: var(--coral); }
+#nota-individual .seg { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 12px; }
+#nota-individual .seg .nome { font-weight: 700; font-size: 30px; line-height: 1.15; }
+#nota-individual .seg .peso { font-family: var(--f-destaque); font-weight: 700; font-size: 34px; margin-top: 8px; }
+#nota-individual .seg.pq { flex: 2; background: var(--branco); }
+#nota-individual .seg.pq + .seg.pq { border-left: 3px solid var(--cinza-claro); }
+#nota-individual .seg.gd { flex: 6; background: var(--roxo); color: var(--branco); }
+#nota-individual .seg.gd .peso { color: var(--coral); }
+
+/* #validacao: a validação de aprendizagem como página (objeto). Passo 0: só o título em foco;
+   passos 1 a 3: o título e um item por vez (grifado) em foco, o resto desfocado */
+#validacao { --fundo: var(--cinza-medio); }
+#validacao .objeto { left: 200px; right: 200px; top: 56px; height: 1000px; padding: 56px 90px;
+  font-family: "EB Garamond", Georgia, serif; color: #1a1a1a; font-size: 30px; line-height: 1.4; }
+#validacao .cab { text-align: center; font-size: 44px; font-weight: 600; }
+#validacao .campos { display: flex; justify-content: space-between; font-size: 22px; font-weight: 600; margin-top: 14px; padding-bottom: 18px; border-bottom: 1.5px solid #1a1a1a; }
+#validacao .questao { display: flex; justify-content: space-between; align-items: baseline; margin-top: 30px; font-size: 32px; font-weight: 700; }
+#validacao .questao small { font-size: 20px; font-weight: 400; }
+#validacao p.enun { margin-top: 18px; }
+#validacao p.item { margin-top: 20px; }
+#validacao .linhas { margin-top: 28px; height: 400px; background: repeating-linear-gradient(transparent 0 46px, #9a9a9a 46px 47.5px); }
+#validacao .objeto > * { transition: filter .35s ease, opacity .35s ease; }
+#validacao .g { padding: 0 .05em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+#validacao .objeto > *:not(.cab) { filter: blur(3px); opacity: .55; }
+#validacao[data-estado="1"] .objeto > .i1, #validacao[data-estado="2"] .objeto > .i2, #validacao[data-estado="3"] .objeto > .i3 { filter: none; opacity: 1; }
+#validacao[data-estado="1"] .g1, #validacao[data-estado="2"] .g2, #validacao[data-estado="3"] .g3 {
+  background: linear-gradient(transparent 12%, rgba(255, 69, 69, .32) 12%, rgba(255, 69, 69, .32) 92%, transparent 92%); }
+
+/* .recorte-doc com .folha: o card de um artefato (HTML como no Adalove) recortado, com a parte que importa nítida e o resto desfocado */
+.recorte-doc .recorte.largo { left: 260px; top: 70px; width: 1080px; }
+.recorte-doc .folha.objeto { position: static; box-shadow: none; }
+.recorte-doc .folha { background: #ffffff; color: #2e2640; font-family: var(--f-texto); font-size: 24px; line-height: 1.45;
+  padding: 50px 70px 80px; max-height: 760px; overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 98%, 87% 94.5%, 79% 99%, 71% 95.5%, 63% 98.5%, 55% 94.5%, 47% 99%, 39% 95.5%, 31% 98.5%, 23% 94.5%, 15% 99%, 7% 95.5%, 0 98.5%); }
+.recorte-doc .folha h2 { font-size: 40px; font-weight: 700; line-height: 1.15; margin-bottom: 18px; }
+.recorte-doc .folha h3 { font-size: 28px; font-weight: 700; margin: 20px 0 6px; }
+.recorte-doc .folha p { margin-bottom: 10px; }
+.recorte-doc .folha ul { margin: 0 0 10px 28px; }
+.recorte-doc .folha .desfocado { filter: blur(3px); opacity: .6; }
+
+/* .semana: tabela dos encontros de uma semana */
+.semana .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.semana table { position: absolute; left: var(--margem-x); width: 1360px; top: 200px; border-collapse: collapse; font-size: 30px; }
+.semana td { padding: 14px 18px; border-top: 2px solid var(--cinza-medio); vertical-align: middle; }
+.semana tr:first-child td { border-top: 0; }
+.semana .dia { font-family: var(--f-destaque); font-weight: 700; width: 210px; white-space: nowrap; }
+.semana .enc { font-weight: 700; }
+.semana .eixo { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; text-transform: uppercase; color: var(--destaque); width: 260px; text-align: right; }
+.semana .prof { width: 90px; }
+.semana .prof img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; }
+.semana tr.feriado td { color: var(--texto-suave); font-weight: 400; }
+
+/* #contrato-social: o que o contrato precisa definir, em seis blocos; o uso de IA em destaque */
+#contrato-social .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+#contrato-social .itens-contrato { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 210px; bottom: 170px;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 32px; }
+#contrato-social .item-c { background: var(--branco); border-radius: 20px; padding: 28px 36px; display: flex; align-items: center;
+  font-weight: 700; font-size: 38px; line-height: 1.15; }
+#contrato-social .item-c.destaque-ia { background: var(--roxo); color: var(--branco); box-shadow: inset 0 0 0 5px var(--coral); }
+#contrato-social .rodape-contrato { position: absolute; left: var(--margem-x); bottom: 90px; }
+
+/* #ferramentas: os logos das ferramentas do módulo, lado a lado, com a versão embaixo */
+#ferramentas .logos { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center; gap: 80px; }
+#ferramentas .ferramenta { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+#ferramentas .cartao { width: 560px; height: 340px; background: var(--branco); border-radius: 24px;
+  display: flex; align-items: center; justify-content: center; }
+#ferramentas .cartao img { max-width: 420px; max-height: 200px; }
+#ferramentas .versao { font-family: var(--f-destaque); font-weight: 700; font-size: 34px; }
+
+
+/* #prazos: a passagem de uma sprint para a outra em três semanas (entrega · validação · notas), separadas por divisórias */
+#prazos .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+#prazos .semanas { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 210px; bottom: 90px;
+  display: grid; grid-template-columns: 1.8fr 1.4fr 1.8fr; gap: 0; }
+#prazos .semana-p { display: flex; flex-direction: column; padding: 0 28px; }
+#prazos .semana-p + .semana-p { border-left: 3px dashed var(--cinza-escuro); }
+#prazos .semana-p:first-child { padding-left: 0; }
+#prazos .semana-p:last-child { padding-right: 0; }
+#prazos .rotulo-semana { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; text-transform: uppercase; color: var(--destaque); margin-bottom: 22px; }
+#prazos .dias-p { display: flex; gap: 20px; align-items: flex-start; }
+#prazos .semana-p.vertical .dias-p { flex-direction: column; }
+#prazos .dia-p { flex: 1; min-height: 230px; background: var(--branco); border-radius: 18px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; }
+#prazos .semana-p.vertical .dia-p { flex: none; min-height: 0; width: 100%; }
+#prazos .semana-p.vertical .dias-p { align-items: stretch; gap: 14px; }
+#prazos .dia-p .quando { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; color: var(--texto-suave); }
+#prazos .dia-p .oque { font-weight: 700; font-size: 34px; line-height: 1.15; }
+#prazos .dia-p .hora { font-family: var(--f-destaque); font-weight: 700; font-size: 40px; color: var(--destaque); }
+#prazos .dia-p.forte { background: var(--roxo); color: var(--branco); }
+#prazos .dia-p.forte .quando { color: var(--cinza-medio); }
+#prazos .dia-p.forte .hora { color: var(--coral); }
+#prazos .ou-p { text-align: center; font-family: var(--f-capitulo); font-size: 40px; line-height: 1; color: var(--texto-suave); }
+
+/* .fluxo-detalhes: fluxograma de etapas (passo 0); no passo k, a etapa k fica em destaque e o seu detalhe aparece embaixo.
+   O número de etapas vem de --n no style do slide. Usado em #revisao e #validar-desafio. */
+.fluxo-detalhes .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.fluxo-detalhes .fluxo { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 200px;
+  display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 48px; }
+.fluxo-detalhes .no { position: relative; background: var(--branco); border-radius: 18px; padding: 22px 14px; text-align: center;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 30px; line-height: 1.15; transition: background .3s, color .3s; }
+.fluxo-detalhes .no + .no::before { content: ""; position: absolute; left: -40px; top: 50%; margin-top: -11px; border: 11px solid transparent; border-left: 20px solid var(--coral); border-right: 0; }
+.fluxo-detalhes .detalhe-r { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 360px; display: none;
+  background: var(--branco); border-radius: 24px; padding: 44px 56px; flex-direction: column; gap: 22px; }
+.fluxo-detalhes .detalhe-r .quando { font-family: var(--f-destaque); font-weight: 700; font-size: 30px; text-transform: uppercase; color: var(--destaque); }
+.fluxo-detalhes .detalhe-r .texto-r { font-size: 40px; line-height: 1.3; }
+.fluxo-detalhes .detalhe-r .saidas { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.fluxo-detalhes .detalhe-r .saida { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; padding: 12px 22px; border-radius: 999px; background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="1"] .no.n1 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="1"] .detalhe-r.d1 { display: flex; }
+.fluxo-detalhes[data-estado="2"] .no.n2 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="2"] .detalhe-r.d2 { display: flex; }
+.fluxo-detalhes[data-estado="3"] .no.n3 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="3"] .detalhe-r.d3 { display: flex; }
+.fluxo-detalhes[data-estado="4"] .no.n4 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="4"] .detalhe-r.d4 { display: flex; }
+.fluxo-detalhes[data-estado="5"] .no.n5 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="5"] .detalhe-r.d5 { display: flex; }
+.fluxo-detalhes[data-estado="6"] .no.n6 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="6"] .detalhe-r.d6 { display: flex; }
+
+/* .cena-atendimento: o passageiro diante de quem atende (totem em #totem, robô em #robo). Mesma composição nos dois. */
+.cena-atendimento .chao { position: absolute; left: 0; right: 0; top: 780px; height: 3px; background: var(--cinza-escuro); }
+.cena-atendimento .passageiro { position: absolute; left: 430px; top: 480px; width: 200px; }
+.cena-atendimento .atendente { position: absolute; left: 760px; top: 220px; width: 260px; }
+.cena-atendimento .balao {
+  position: absolute; left: 1060px; top: 240px; background: var(--branco); border-radius: 24px; padding: 22px 32px;
+  font-weight: 700; font-size: 40px;
+}
+.cena-atendimento .balao::before { content: ""; position: absolute; left: -22px; top: 34px; border: 14px solid transparent; border-right: 22px solid var(--branco); border-left: 0; }
+.cena-atendimento .rotulo-termo { position: absolute; left: 690px; width: 400px; top: 160px; text-align: center; }
+.cena-atendimento .legenda { position: absolute; left: var(--margem-x); bottom: 56px; }
+#robo .trajeto { position: absolute; left: 1030px; top: 700px; width: 400px; height: 0; border-top: 6px dashed var(--coral); }
+#robo .trajeto::after { content: ""; position: absolute; right: -6px; top: -17px; border: 14px solid transparent; border-left: 24px solid var(--coral); border-right: 0; }
+
+/* .linha-sprints: linha do tempo das sprints (mesma ideia da linha do tempo do deck de IA do Exec).
+   Um slide por sprint (data-sprint = 1..5): pontos preenchidos até a sprint atual e só a frase dela embaixo. */
+.linha-sprints .trilho { position: absolute; top: 380px; left: 110px; width: 1380px; height: 3px; background: var(--roxo); }
+.linha-sprints .marco { position: absolute; top: 260px; width: 260px; margin-left: -130px; height: 200px; text-align: center; }
+.linha-sprints .marco .nome { position: absolute; top: 30px; left: 0; right: 0; font-family: var(--f-destaque); font-size: 34px; color: var(--texto-suave); }
+.linha-sprints .marco .ponto { position: absolute; top: 108px; left: 50%; width: 26px; height: 26px; margin-left: -13px;
+  border-radius: 50%; background: var(--fundo); border: 4px solid var(--coral); }
+.linha-sprints .marco.feito .ponto { background: var(--coral); }
+.linha-sprints .marco.atual .nome { color: var(--texto); font-weight: 700; }
+.linha-sprints .marco.atual .ponto { width: 40px; height: 40px; margin-left: -20px; top: 101px; }
+.linha-sprints .frase { position: absolute; top: 500px; left: var(--margem-x); right: var(--margem-x); text-align: center;
+  font-weight: 700; font-size: 56px; line-height: 1.15; }
+
+/* #equipe: grade de professores, foto redonda, nome e trilha */
+#equipe .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+#equipe .grade {
+  position: absolute; left: var(--margem-x); right: var(--margem-x); top: 200px; bottom: 70px;
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); gap: 24px 40px;
+}
+#equipe .pessoa { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+#equipe .foto {
+  width: 170px; height: 170px; border-radius: 50%; object-fit: cover; margin-bottom: 18px;
+  box-shadow: 0 0 0 5px var(--branco);
+}
+#equipe .iniciais {
+  display: flex; align-items: center; justify-content: center; background: var(--roxo); color: var(--branco);
+  font-family: var(--f-capitulo); font-size: 64px;
+}
+#equipe .nome { font-weight: 700; font-size: 30px; line-height: 1.2; }
+#equipe .trilha { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; text-transform: uppercase; color: var(--destaque); margin-top: 6px; }
+#equipe .pessoa.orientador .foto { box-shadow: 0 0 0 5px var(--coral); }
+
+</style>
+</head>
+<body>
+<main class="deck">
+
+  <section class="slide capa sem-numero">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="conteudo">
+      <h1 class="titulo-capa">M8 - Navegação autônoma</h1>
+      <p class="autor">Prof. Nicola</p>
+    </div>
+    <aside class="notas">Abertura do módulo 8 de Engenharia de Computação (turma T16, 2026-2B).</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="0">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: a equipe é o primeiro item.</aside>
+  </section>
+
+  <section class="slide" id="equipe" data-modelo="grade-de-pessoas">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Equipe</h2>
+    <div class="grade">
+      <div class="pessoa orientador"><img class="foto" src="assets/equipe/nicola.jpg" alt="Rodrigo Nicola"><p class="nome">Rodrigo Nicola</p><p class="trilha">Orientação</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/fabiana.jpg" alt="Fabiana Iegawa"><p class="nome">Fabiana Iegawa</p><p class="trilha">Computação</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/murilo.jpg" alt="Murilo Zanini"><p class="nome">Murilo Zanini</p><p class="trilha">Computação</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/jefferson.jpg" alt="Jefferson Silva"><p class="nome">Jefferson Silva</p><p class="trilha">Computação</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/diogo.jpg" alt="Diogo Morais"><p class="nome">Diogo Morais</p><p class="trilha">Matemática</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/mariana.jpg" alt="Mariana Vicente"><p class="nome">Mariana Vicente</p><p class="trilha">Design</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/rafael.jpg" alt="Rafael Donaire"><p class="nome">Rafael Donaire</p><p class="trilha">Negócios</p></div>
+      <div class="pessoa"><img class="foto" src="assets/equipe/filipe.jpg" alt="Filipe Gonçalves"><p class="nome">Filipe Gonçalves</p><p class="trilha">Liderança</p></div>
+    </div>
+    <aside class="notas">Orientador: Rodrigo Nicola. Computação: Fabiana Naomi Iegawa (navegação e robótica: ROS 2, Nav2, localização, SLAM), Murilo Zanini de Carvalho (algoritmos: representação de grafos, travessia, Dijkstra e Prim), Jefferson de Oliveira Silva (linguagem e deep learning: PLN, embeddings, RNN, atenção, transformer). Matemática: Diogo Martins Gonçalves de Morais. Design (UX): Mariana Vicente Oliveira. Negócios: Rafael Donaire Bindo de Lima. Liderança: Filipe Gonçalves de Souza Nogueira da Silva.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="1">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: projeto.</aside>
+  </section>
+
+  <section class="slide" id="estacao" data-modelo="cena-ilustrada">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <img class="logo-parceiro" src="assets/projeto/cptm-completo.svg" alt="CPTM">
+    <div class="multidao passo" data-passo="1"></div>
+    <p class="placa" style="left:130px; top:190px; transform: rotate(-4deg)">← Linha 11</p>
+    <p class="placa" style="left:760px; top:170px; transform: rotate(3deg)">Linha 12 →</p>
+    <p class="placa" style="left:880px; top:330px; transform: rotate(-2deg)">↑ Metrô</p>
+    <p class="placa" style="left:790px; top:520px; transform: rotate(4deg)">Saída ↗</p>
+    <p class="placa" style="left:180px; top:620px; transform: rotate(-3deg)">← Elevador</p>
+    <svg class="passageiro" viewBox="0 0 200 300"><path d="M28 300 V236 Q28 176 100 176 Q172 176 172 236 V300 Z" fill="#2e2640"/><circle cx="100" cy="104" r="50" fill="#caced6"/></svg>
+    <p class="duvida">?</p>
+    <div class="numero passo" data-passo="1">
+      <p class="grande">1,5 milhão</p>
+      <p class="rotulo">de passageiros por dia útil</p>
+    </div>
+    <aside class="notas">Passo 0: a dúvida de um passageiro numa estação, com placas para todos os lados (trajetos, baldeações, saídas, acessibilidade). Passo 1: a escala. A CPTM transporta cerca de 1,5 milhão de passageiros por dia útil (1,56 milhão em 2025, segundo o Painel do Transporte Metroferroviário da CNT). As dúvidas são recorrentes e se concentram no horário de pico, quando há menos atendentes disponíveis por passageiro; pesa mais sobre passageiros eventuais, turistas e quem tem pouca familiaridade com a rede. A proposta: um robô de serviço autônomo, com IA generativa, que orienta e conduz o passageiro. Modelo de negócio: aluguel do robô, por isso o sistema precisa funcionar em diferentes plataformas robóticas.</aside>
+  </section>
+
+  <section class="slide cena-atendimento" id="totem" data-modelo="cena-atendimento">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="chao"></div>
+    <svg class="passageiro" viewBox="0 0 200 300"><path d="M28 300 V236 Q28 176 100 176 Q172 176 172 236 V300 Z" fill="#2e2640"/><circle cx="100" cy="104" r="50" fill="#caced6"/></svg>
+    <svg class="atendente" viewBox="0 0 260 560"><rect x="20" y="0" width="220" height="470" rx="24" fill="#2e2640"/><rect x="40" y="30" width="180" height="260" rx="10" fill="#ffffff"/><g transform="translate(73 90)"><rect x="8" y="10" width="44" height="34" rx="4" fill="#caced6"/><rect x="62" y="10" width="44" height="60" rx="4" fill="#caced6"/><rect x="8" y="54" width="44" height="50" rx="4" fill="#caced6"/><rect x="62" y="80" width="44" height="24" rx="4" fill="#caced6"/><path d="M30 118 V50 H58 V8" fill="none" stroke="#ff4545" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="118" r="8" fill="#2e2640"/><circle cx="58" cy="8" r="8" fill="#ff4545"/></g><rect x="70" y="320" width="120" height="16" rx="8" fill="#b2b6bf"/><circle cx="130" cy="390" r="26" fill="#ff4545"/><rect x="105" y="470" width="50" height="70" fill="#2e2640"/><rect x="55" y="530" width="150" height="30" rx="8" fill="#2e2640"/></svg>
+    <p class="balao">Posso ajudar?</p>
+    <p class="rotulo-termo">Autoatendimento</p>
+    <p class="legenda">Inspirado no quiosque Ask Me, do Aeroporto de Istambul</p>
+    <aside class="notas">Uma resposta que já existe: totens de autoatendimento, como os quiosques "Ask Me" do Aeroporto de Istambul (informação, rotas dentro do terminal, atendimento por vídeo). Ajudam na dúvida, mas ficam parados: mostram o caminho, não levam o passageiro até lá, e quem tem pouca familiaridade digital ou necessidade de acessibilidade continua com dificuldade.</aside>
+  </section>
+
+  <section class="slide cena-atendimento" id="robo" data-modelo="cena-atendimento">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="chao"></div>
+    <svg class="passageiro" viewBox="0 0 200 300"><path d="M28 300 V236 Q28 176 100 176 Q172 176 172 236 V300 Z" fill="#2e2640"/><circle cx="100" cy="104" r="50" fill="#caced6"/></svg>
+    <svg class="atendente" viewBox="0 0 260 560"><line x1="130" y1="0" x2="130" y2="30" stroke="#2e2640" stroke-width="6"/><circle cx="130" cy="8" r="10" fill="#ff4545"/><rect x="50" y="28" width="160" height="120" rx="40" fill="#2e2640"/><rect x="72" y="48" width="116" height="80" rx="26" fill="#ffffff"/><circle cx="108" cy="82" r="9" fill="#2e2640"/><circle cx="152" cy="82" r="9" fill="#2e2640"/><path d="M110 104 Q130 120 150 104" fill="none" stroke="#ff4545" stroke-width="6" stroke-linecap="round"/><rect x="110" y="148" width="40" height="18" fill="#2e2640"/><rect x="40" y="166" width="180" height="300" rx="40" fill="#2e2640"/><rect x="62" y="196" width="136" height="150" rx="10" fill="#ffffff"/><g transform="translate(73 206)"><rect x="8" y="10" width="44" height="34" rx="4" fill="#caced6"/><rect x="62" y="10" width="44" height="60" rx="4" fill="#caced6"/><rect x="8" y="54" width="44" height="50" rx="4" fill="#caced6"/><rect x="62" y="80" width="44" height="24" rx="4" fill="#caced6"/><path d="M30 118 V50 H58 V8" fill="none" stroke="#ff4545" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="118" r="8" fill="#2e2640"/><circle cx="58" cy="8" r="8" fill="#ff4545"/></g><rect x="30" y="460" width="200" height="56" rx="22" fill="#b2b6bf"/><circle cx="75" cy="530" r="28" fill="#2e2640"/><circle cx="185" cy="530" r="28" fill="#2e2640"/></svg>
+    <p class="balao">Posso ajudar?</p>
+    <div class="trajeto"></div>
+    <p class="rotulo-termo">Robô de serviço</p>
+    <aside class="notas">A proposta do projeto: o mesmo atendimento, num robô de serviço autônomo. Ele conversa por voz ou toque, usando IA generativa com uma base de conhecimento da CPTM, e pode conduzir o passageiro fisicamente até um ponto da estação (a seta tracejada). Em emergências (mal súbito, importunação), encaminha à segurança da estação. Como a CPTM pensa em alugar os robôs, o sistema precisa funcionar em diferentes plataformas robóticas.</aside>
+  </section>
+
+
+  <section class="slide linha-sprints" id="roadmap-1" data-modelo="linha-do-tempo" data-sprint="1">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 1 (entrega 23/10): definição do problema e proposta da solução, com a prova de conceito de rotas no grafo das linhas da CPTM (origem e destino, melhor caminho).</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-2" data-modelo="linha-do-tempo" data-sprint="2">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 2 (06/11): interface que roda em tablet, FAQ fixo, rotas com busca implementada pelo grupo e o botão "me leve até", com Nav2 e TurtleBot 3 simulado num mapa de teste.</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-3" data-modelo="linha-do-tempo" data-sprint="3">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 3 (19/11): assistente com LLM, base de contexto da CPTM e ferramentas; fluxos de emergência; harness de testes; mapa simulado de uma estação da CPTM.</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-4" data-modelo="linha-do-tempo" data-sprint="4">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 4 (04/12): voz (STT e TTS) e o mesmo sistema no tablet sem robô e em três plataformas robóticas simuladas, escolhidas pelo grupo.</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-5" data-modelo="linha-do-tempo" data-sprint="5">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 5 (18/12): consolidação, validação com usuários e release final.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="2">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: objetivos de aprendizagem.</aside>
+  </section>
+
+  <section class="slide" id="trilhas" data-modelo="colunas-de-trilhas">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Trilhas de Computação</h2>
+    <div class="colunas">
+      <div class="trilha-col"><img src="assets/equipe/fabiana.jpg" alt="Fabiana Iegawa"><h3>Navegação</h3><ul><li>ROS 2 e Nav2</li><li>Mapas e localização</li><li>SLAM</li></ul></div>
+      <div class="trilha-col"><img src="assets/equipe/murilo.jpg" alt="Murilo Zanini"><h3>Algoritmos</h3><ul><li>Representação de grafos</li><li>Busca em grafos</li><li>Caminhos mínimos</li></ul></div>
+      <div class="trilha-col"><img src="assets/equipe/jefferson.jpg" alt="Jefferson Silva"><h3>Linguagem</h3><ul><li>Embeddings</li><li>Redes recorrentes</li><li>Atenção e transformer</li></ul></div>
+    </div>
+    <aside class="notas">As duas espinhas dorsais do módulo: grafos (navegação e algoritmos) e modelos de linguagem. Navegação (Fabiana): pipeline de navegação, ROS 2 e Nav2, pose e odometria, representação do ambiente, planejamento de caminho e A*, localização (EKF, filtro de partículas e AMCL), SLAM e loop closure. Algoritmos (Murilo): representação de grafos, DFS e BFS, Dijkstra e Prim. Linguagem (Jefferson): PLN clássico, word2vec e GloVe, RNN, LSTM e GRU, seq2seq e atenção, transformer e LLMs, entender o que está por trás da tecnologia que o projeto usa.</aside>
+  </section>
+
+  <section class="slide estante" id="livros-navegacao" data-modelo="estante">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Navegação</h2>
+    <div class="capas"><a class="principal" href="https://www.amazon.com.br/Robotics-Vision-Control-Fundamental-Algorithms/dp/3031064682" target="_blank" rel="noopener"><img src="assets/livros/corke.jpg" alt="Robotics, Vision and Control (3rd edition), Peter Corke"></a></div>
+    <aside class="notas">Peter Corke, Robotics, Vision and Control: Fundamental Algorithms in Python, 3ª edição (Springer, 2023). Temos exemplar na biblioteca. A capa é um link para a Amazon.</aside>
+  </section>
+
+  <section class="slide estante" id="livros-algoritmos" data-modelo="estante">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Algoritmos</h2>
+    <div class="capas"><a class="principal" href="https://jeffe.cs.illinois.edu/teaching/algorithms/" target="_blank" rel="noopener"><img src="assets/livros/erickson.jpg" alt="Algorithms, Jeff Erickson"></a><a href="https://www.amazon.com.br/Algorithms-Sanjoy-Dasgupta/dp/0073523402" target="_blank" rel="noopener"><img src="assets/livros/dasgupta.jpg" alt="Algorithms, Dasgupta, Papadimitriou e Vazirani"></a><a href="https://www.amazon.com.br/dp/0262033844" target="_blank" rel="noopener"><img src="assets/livros/cormen.jpg" alt="Introduction to Algorithms (3rd edition), Cormen et al."></a></div>
+    <aside class="notas">Leitura principal: Jeff Erickson, Algorithms (1ª edição, 2019), livro aberto, com PDF por capítulo no site do autor (a capa é o link). Alternativas: Dasgupta, Papadimitriou e Vazirani, Algorithms (1ª edição, McGraw-Hill, 2006) e Cormen, Leiserson, Rivest e Stein, Introduction to Algorithms (3ª edição). As capas das alternativas levam à Amazon.</aside>
+  </section>
+
+  <section class="slide estante" id="livros-linguagem" data-modelo="estante">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Linguagem</h2>
+    <div class="capas"><a class="principal" href="https://www.amazon.com.br/dp/0137470355" target="_blank" rel="noopener"><img src="assets/livros/ldl.jpg" alt="Learning Deep Learning, Magnus Ekman"></a><a href="https://web.stanford.edu/~jurafsky/slp3/" target="_blank" rel="noopener"><img src="assets/livros/jurafsky.jpg" alt="Speech and Language Processing (3rd edition draft), Jurafsky e Martin"></a></div>
+    <aside class="notas">Leitura principal: Magnus Ekman, Learning Deep Learning (Addison-Wesley, 2021; edição única). Temos exemplares na biblioteca; a capa leva à Amazon. Alternativa aberta: Jurafsky e Martin, Speech and Language Processing, 3ª edição em versão preliminar (19/08/2026), gratuita no site dos autores (a capa é o link).</aside>
+  </section>
+
+  <section class="slide recorte-doc" id="diario" data-modelo="recorte-de-jornal">
+    <div class="recorte"><a href="https://drive.google.com/file/d/1kLuh6e3R_vGkuLnojRLH6Qj-Q2B3zltM/view?usp=sharing" target="_blank" rel="noopener"><img src="assets/diario/diario-p1.jpg" alt="Diário de aprendizado"></a></div>
+    <aside class="notas">O diário de aprendizado acompanha todo autoestudo de Computação (o link está em cada card do Adalove; a página é um link para o PDF no Drive). Três momentos: antes do encontro, leitura do todo, anotando palavras-chave, perguntas centrais e dúvidas; no encontro, validar e completar; na revisão, responder às perguntas e conferir no material. O PDF é preenchível: salvar um arquivo por encontro e abrir num leitor de PDF, não na pré-visualização do Drive.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="3">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: avaliação.</aside>
+  </section>
+
+  <section class="slide" id="nota-individual" data-modelo="equacao-em-passos">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="formula">
+      <div class="termo-f"><p class="v">Nota individual</p></div>
+      <p class="op">=</p>
+      <div class="termo-f"><p class="v">Nota do grupo</p><p class="faixa">0 a 10</p></div>
+      <p class="op">×</p>
+      <div class="termo-f termo-fp"><p class="v">FP</p><p class="faixa">0 a 1</p></div>
+    </div>
+    <p class="fp-igual passo" data-passo="1">FP =</p>
+    <div class="barra passo" data-passo="1">
+      <div class="seg pq"><p class="nome">Organização</p><p class="peso">0,2</p></div>
+      <div class="seg pq"><p class="nome">Contribuição</p><p class="peso">0,2</p></div>
+      <div class="seg gd"><p class="nome">Validação de aprendizagem</p><p class="peso">0,6</p></div>
+    </div>
+    <aside class="notas">FP = fator de performance. Nota individual por artefato. A nota individual de cada artefato é a nota do grupo (0 a 10) multiplicada pelo FP (0 a 1): ela nunca passa da nota do grupo. Passo 1: o FP (com moldura) se abre na barra: ele se compõe de organização (0,2), contribuição (0,2) e validação de aprendizagem (0,6), cada componente avaliado de 0 a 1 e somado com esses pesos. A validação é o que mais pesa. Exemplo para a fala: grupo com 8,0 e aluno com FP 0,9 fica com 7,2.</aside>
+  </section>
+
+  <section class="slide" id="validacao" data-modelo="pagina-de-artigo">
+    <div class="objeto sangra" aria-hidden="true">
+      <p class="cab">Validação de Aprendizagem</p>
+      <div class="campos"><span>Grupo:</span><span>Aluno(a):</span><span>Página 1 de 2</span></div>
+      <p class="questao"><span>1. Quantização: PTQ, QAT e precisão mista</span><small>cada item vale 0,1 — questão vale 0,3</small></p>
+      <p class="enun">Projetos de <b>edge computing</b> precisam reduzir o uso de <b>memória</b> e a <b>latência</b>. A <b>quantização de modelos</b> ajuda, mas pode degradar suas métricas. Responda aos itens a seguir.</p>
+      <p class="item i1"><span class="g g1"><b>A) Explique</b> o que são <b>PTQ</b> e <b>QAT</b> e por que podem produzir modelos <b>INT8</b> com qualidades diferentes.</span></p>
+      <p class="item i2"><span class="g g2"><b>B) Analise</b> a afirmação: “Se a <b>PTQ</b> reduz a qualidade, deve-se aplicar <b>QAT</b>, pois ela recupera a qualidade sem alterar o custo da inferência.”</span></p>
+      <p class="item i3"><span class="g g3"><b>C) Avalie</b> qual deve ser o próximo passo para o modelo analisado pelo grupo: repetir PTQ, aplicar QAT, usar precisão mista ou rejeitar sua quantização.</span></p>
+      <div class="linhas"></div>
+    </div>
+    <i class="passo" data-passo="1"></i><i class="passo" data-passo="2"></i><i class="passo" data-passo="3"></i>
+    <aside class="notas">Exemplo real: questão 1 da validação da sprint 4 do M11 (edge computing). Passo 0: só o título do documento em foco. Passos 1 a 3: um item por vez. A cada sprint, uma prova individual e escrita, com questões sobre o conteúdo da sprint (aulas e autoestudos) aplicado ao projeto do grupo. Cada questão tem três itens que sobem de nível: A) explicar o conceito; B) analisar uma afirmação; C) avaliar uma decisão no projeto do próprio grupo. É ela que compõe 0,6 do FP. O diário de aprendizado é o melhor preparo.</aside>
+  </section>
+
+  <section class="slide" id="prazos" data-modelo="dias-da-sprint" data-max-palavras="40">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Prazos</h2>
+    <div class="semanas">
+      <div class="semana-p"><p class="rotulo-semana">Semana da entrega</p>
+        <div class="dias-p">
+          <div class="dia-p forte"><p class="quando">QUINTA</p><p class="oque">Entrega da sprint</p><p class="hora">23h59</p></div>
+          <div class="dia-p"><p class="quando">SEXTA</p><p class="oque">Review com o parceiro</p></div>
+        </div></div>
+      <div class="semana-p vertical"><p class="rotulo-semana">Semana seguinte</p>
+        <div class="dias-p">
+          <div class="dia-p"><p class="quando">SEGUNDA</p><p class="oque">Validação na orientação</p></div>
+          <p class="ou-p">ou</p>
+          <div class="dia-p"><p class="quando">TERÇA</p><p class="oque">Validação no dev</p></div>
+        </div></div>
+      <div class="semana-p"><p class="rotulo-semana">Semana das notas</p>
+        <div class="dias-p">
+          <div class="dia-p forte"><p class="quando">SEGUNDA</p><p class="oque">Notas publicadas</p></div>
+          <div class="dia-p"><p class="quando">QUINTA</p><p class="oque">Revisão</p></div>
+        </div></div>
+    </div>
+    <aside class="notas">Entrega da sprint: sempre na quinta-feira anterior à review, até 23h59 (na sprint 1, quinta 22/10; review com o parceiro na sexta 23/10). Semana seguinte: validação de aprendizagem na segunda, durante o encontro de orientação, ou na terça, durante o período de desenvolvimento; a turma escolhe qual (combinar hoje). Na segunda-feira da semana depois da validação, as notas são publicadas e as validações corrigidas, devolvidas; a revisão acontece na quinta-feira dessa mesma semana (próximo slide).</aside>
+  </section>
+
+  <section class="slide fluxo-detalhes" id="revisao" data-modelo="fluxo-com-detalhes" data-max-palavras="110" style="--n: 4">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Revisão da validação</h2>
+    <div class="fluxo"><div class="no n1">Devolução</div><div class="no n2">Pedido</div><div class="no n3">Conversa</div><div class="no n4">Decisão</div></div>
+    <div class="detalhe-r d1"><p class="quando">Segunda-feira da semana das notas</p><p class="texto-r">Junto com a publicação das notas, cada aluno recebe a sua validação de aprendizagem corrigida.</p></div>
+    <div class="detalhe-r d2"><p class="quando">Até quarta-feira, véspera da revisão</p><p class="texto-r">Quem quiser revisar manda um pedido pelo Slack, já com a argumentação: o que quer revisar e por quê.</p></div>
+    <div class="detalhe-r d3"><p class="quando">Quinta-feira, no período de autoestudo</p><p class="texto-r">Conversa presencial e rápida sobre o pedido enviado. Chego preparado: o que vale é a argumentação do pedido.</p></div>
+    <div class="detalhe-r d4"><p class="quando">Depois da conversa</p><p class="texto-r">O pedido é deferido, indeferido ou fica em investigação, quando o caso precisa ser analisado com mais cuidado.</p></div>
+    <i class="passo" data-passo="1"></i><i class="passo" data-passo="2"></i><i class="passo" data-passo="3"></i><i class="passo" data-passo="4"></i>
+    <aside class="notas">Passo 0: o fluxo inteiro. Passos 1 a 4: cada etapa, com o que é e quando acontece (um texto por vez na tela, por volta de 30 palavras). 1) Devolução: na segunda-feira em que as notas são publicadas. 2) Pedido pelo Slack até a véspera (quarta), com a argumentação do que quer revisar e por quê. 3) Conversa presencial na quinta, no período de autoestudo; chego preparado e a conversa tende a ser rápida. 4) Decisão: defiro, indefiro ou decido que preciso investigar melhor o caso.</aside>
+  </section>
+
+
+  <section class="slide recorte-doc" id="desafio-1" data-modelo="recorte-de-jornal">
+    <div class="recorte"><a href="https://drive.google.com/file/d/1speQ6ng0WlF1nSUCQ2IelcFz33CIoQEW/view?usp=drive_link" target="_blank" rel="noopener"><img src="assets/desafio/desafio-1-p1.jpg" alt="Desafio 1: Sistema 1 na árvore de comportamento"></a></div>
+    <aside class="notas">Desafio de pesquisa ligado ao projeto. Desafio 1: usar um modelo de decisão rápida do tipo "sistema 1" (por exemplo, o Jev, que devolve probabilidades para perguntas tipadas numa única passada, ou a alternativa aberta Laya) para tomar as decisões semânticas da navegação do robô (para onde ir, como se recuperar, quando pedir ajuda) no lugar de partes da árvore de comportamento do Nav2, sem pagar a latência de um LLM e sabendo quando não decidir sozinho. O aluno escolhe um recorte, implementa no simulador sobre o sistema do grupo, compara com uma linha de base e escreve um artigo curto. Mais importante que o resultado ser positivo é entender e explicar cada decisão.</aside>
+  </section>
+
+  <section class="slide fluxo-detalhes" id="validar-desafio" data-modelo="fluxo-com-detalhes" data-max-palavras="170" style="--n: 6">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Como validar um desafio</h2>
+    <div class="fluxo"><div class="no n1">Proposta</div><div class="no n2">Short paper</div><div class="no n3">Entrega</div><div class="no n4">Análise</div><div class="no n5">Arguição</div><div class="no n6">Aprovação</div></div>
+    <div class="detalhe-r d1"><p class="quando">Antes de começar</p><p class="texto-r">Escolha um desafio e me avise que vai trabalhar nele, contando a estratégia de solução que pretende seguir. Posso marcar uma mentoria para ajudar.</p></div>
+    <div class="detalhe-r d2"><p class="quando">Durante o desenvolvimento</p><p class="texto-r">Desenvolva a solução e escreva o resultado como short paper, no template que vou fornecer.</p></div>
+    <div class="detalhe-r d3"><p class="quando">Pelo Slack</p><p class="texto-r">Envie o short paper com uma mensagem dizendo por que o trabalho é uma inovação e onde você acha que podemos publicá-lo.</p></div>
+    <div class="detalhe-r d4"><p class="quando">Mérito da entrega</p><p class="texto-r">Avalio o mérito e decido o próximo passo. Rejeição e mentoria permitem reentrega.</p><div class="saidas"><p class="saida">Está boa → arguição</p><p class="saida">Abaixo do desafio → rejeição</p><p class="saida">Falta refinar → mentoria</p></div></div>
+    <div class="detalhe-r d5"><p class="quando">Presencial</p><p class="texto-r">Faço perguntas técnicas sobre o seu trabalho e sobre os conteúdos do módulo. Se eu sair insatisfeito, nego o pedido ou marco uma nova data para você se preparar melhor.</p></div>
+    <div class="detalhe-r d6"><p class="quando">Desafio aprovado</p><p class="texto-r">Você escolhe as duas notas que serão alteradas. O trabalho provavelmente é publicável: vamos atrás da publicação, que também rende horas complementares.</p></div>
+    <i class="passo" data-passo="1"></i><i class="passo" data-passo="2"></i><i class="passo" data-passo="3"></i><i class="passo" data-passo="4"></i><i class="passo" data-passo="5"></i><i class="passo" data-passo="6"></i>
+    <aside class="notas">Passo 0: o fluxo inteiro. Depois, uma etapa por passo. 1) Proposta: o aluno escolhe o desafio e me comunica, obrigatoriamente com a estratégia de solução que está pensando; posso marcar uma mentoria. 2) Short paper: desenvolve e formata como short paper (template fornecido). 3) Entrega pelo Slack, com uma mensagem que deixe claro por que o trabalho é uma inovação e uma sugestão de onde publicar. 4) Análise do mérito: (a) está boa, marco a arguição; (b) não está à altura do desafio, rejeito; (c) há valor mas falta refinamento, marco uma mentoria. (b) e (c) permitem reentrega. 5) Arguição: perguntas técnicas que validam que o aluno sabe sobre o próprio trabalho e absorveu os conteúdos do módulo; se eu sair insatisfeito, nego o pedido ou dou uma segunda chance com nova data. 6) Aprovado: o aluno escolhe as duas notas que serão alteradas; o trabalho provavelmente é publicável, então perseguimos a publicação, o que também rende horas complementares.</aside>
+  </section>
+
+
+  <section class="slide agenda curta" data-agora="4">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: sprint 1.</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-sprint-1" data-modelo="linha-do-tempo" data-sprint="1">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">De volta à linha do tempo: a sprint 1 (entrega em 23/10) é a definição do problema e a proposta da solução, com a prova de conceito de rotas no grafo da CPTM.</aside>
+  </section>
+
+  <section class="slide recorte-doc" id="artefato-proposta" data-modelo="recorte-de-jornal">
+    <div class="recorte largo"><div class="folha objeto">
+      <h2>Artefato de proposta da solução</h2>
+      <h3>Peso</h3><p>6 pontos.</p>
+      <h3>Escopo</h3>
+      <p>O grupo deve elaborar uma proposta para resolver o problema apresentado pela CPTM: orientar passageiros nas estações por meio de um robô de serviço autônomo, capaz de responder dúvidas e conduzir fisicamente o usuário até pontos de interesse. A proposta deve mostrar que a solução para em pé, isto é, que resolve um problema real de usuários reais e é viável dentro das restrições do módulo.</p>
+      <div class="desfocado">
+        <p>Ela deve definir o problema, o valor esperado para o parceiro (considerando o modelo de negócio de aluguel do robô), requisitos iniciais, limites do produto, uma arquitetura inicial e os riscos que podem comprometer a solução.</p>
+        <p>A análise do usuário é o elemento central da proposta. Ela deve ser fundamentada e ter consequência nas decisões tomadas, abordando, no mínimo:</p>
+        <ul><li>os perfis de passageiros atendidos;</li><li>as necessidades e dificuldades de cada perfil;</li></ul>
+      </div>
+    </div></div>
+    <aside class="notas">Artefato de proposta da solução (peso 6), texto completo no card do Adalove. Pontos centrais: mostrar que a solução para em pé (problema real, usuários reais, viável no módulo); análise do usuário como elemento central (perfis, necessidades, jornadas do TAPI, fluxos críticos, requisitos); arquitetura inicial em camadas, desacoplada da plataforma robótica; e a prova de conceito de rotas no grafo das linhas da CPTM (origem e destino, melhor caminho; justificar vértices, arestas, baldeações, critério e representação; linguagem livre; busca por biblioteca liberada nesta sprint, implementação própria na sprint 2). Não é obrigatório usar robô, simulação ou LLM nesta sprint.</aside>
+  </section>
+
+  <section class="slide recorte-doc" id="artefato-documentacao" data-modelo="recorte-de-jornal">
+    <div class="recorte largo"><div class="folha objeto">
+      <h2>Artefato de documentação</h2>
+      <h3>Peso</h3><p>3 pontos.</p>
+      <h3>Escopo</h3>
+      <p>A documentação desta sprint deve registrar a proposta e a prova de conceito e conter o contrato social do grupo: um acordo, construído e aceito por todos os integrantes, que descreve os comportamentos esperados e os ritos que o grupo vai seguir ao longo do módulo.</p>
+      <div class="desfocado">
+        <p>O contrato deve ser concreto o bastante para que qualquer pessoa consiga verificar se ele está sendo cumprido e deve abordar, no mínimo:</p>
+        <ul><li>o papel do scrum master, se ele será fixo ou em rodízio e o que ele faz;</li><li>a daily: quando acontece, quanto dura, como é conduzida e como é registrada;</li></ul>
+      </div>
+    </div></div>
+    <aside class="notas">Artefato de documentação (peso 3). Avaliado por clareza, concisão e reprodutibilidade (alguém de fora executa a prova de conceito na primeira tentativa, só com as instruções). Nesta sprint, a documentação também traz o contrato social do grupo (próximo slide).</aside>
+  </section>
+
+  <section class="slide" id="contrato-social" data-modelo="grade-de-itens">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Contrato social do grupo</h2>
+    <div class="itens-contrato">
+      <div class="item-c">Scrum master</div>
+      <div class="item-c">Daily registrada no Slack</div>
+      <div class="item-c">Ritos da sprint</div>
+      <div class="item-c">Fluxo no repositório</div>
+      <div class="item-c">Comportamentos e conflitos</div>
+      <div class="item-c destaque-ia">IA generativa sob controle do grupo</div>
+    </div>
+    <p class="rotulo-termo rodape-contrato">Acompanhado em cada retrospectiva</p>
+    <aside class="notas">Entregue na documentação da sprint 1. Um acordo concreto, aceito por todos, que diz como o grupo trabalha. Scrum master: fixo ou em rodízio (o grupo decide) e o que ele faz. Daily: quando, quanto dura, como é conduzida; registrada no canal do grupo no Slack. Ritos da sprint: como o planning vira tarefas, como preparam a review com o parceiro, quando é a retrospectiva. Fluxo no repositório: quadro de tarefas, branches, revisão de pull requests. Comunicação e tempo de resposta. Comportamentos esperados, o que acontece quando o acordo é quebrado, como decidem e resolvem conflitos. IA generativa: em que atividades usam, como revisam o que ela produz e como cada um garante que entende e consegue explicar o que foi entregue; isso pesa direto na validação de aprendizagem, que é 0,6 do FP. O contrato é acompanhado em cada retrospectiva e revisado quando o grupo achar necessário; ele é a régua para organização e contribuição no FP.</aside>
+  </section>
+
+  <section class="slide semana" id="semana-1" data-modelo="tabela-da-semana" data-max-palavras="40">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Semana 1</h2>
+    <table>
+<tr class="feriado"><td class="dia">seg 12/10</td><td class="prof"></td><td class="enc">Feriado</td><td class="eixo"></td></tr>
+<tr class="feriado"><td class="dia">ter 13/10</td><td class="prof"></td><td class="enc">Feriado</td><td class="eixo"></td></tr>
+<tr><td class="dia">qua 14/10</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Onboarding e Sprint Planning 1</td><td class="eixo">Orientação</td></tr>
+<tr><td class="dia">qui 15/10</td><td class="prof"><img src="assets/equipe/fabiana.jpg" alt=""></td><td class="enc">Introdução à Navegação Autônoma</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">sex 16/10</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Workshop com o parceiro</td><td class="eixo">Orientação</td></tr>
+    </table>
+    <aside class="notas">Semana 1 (12 a 16/10): segunda e terça são feriado. Quarta: onboarding e sprint planning 1. Quinta: Introdução à Navegação Autônoma (Fabiana), com autoestudo do Corke (cap. 1, introdução da Parte II e seção 5.2) e o diário de aprendizado. Sexta: workshop com o parceiro (CPTM).</aside>
+  </section>
+
+  <section class="slide semana" id="semana-2" data-modelo="tabela-da-semana" data-max-palavras="45">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Semana 2</h2>
+    <table>
+<tr><td class="dia">seg 19/10</td><td class="prof"><img src="assets/equipe/mariana.jpg" alt=""></td><td class="enc">Do Golem aos Androides</td><td class="eixo">Design</td></tr>
+<tr><td class="dia">ter 20/10</td><td class="prof"><img src="assets/equipe/rafael.jpg" alt=""></td><td class="enc">O mercado de robôs autônomos</td><td class="eixo">Negócios</td></tr>
+<tr><td class="dia">qua 21/10</td><td class="prof"><img src="assets/equipe/diogo.jpg" alt=""></td><td class="enc">Feedforward em Redes Neurais</td><td class="eixo">Matemática</td></tr>
+<tr><td class="dia">qui 22/10</td><td class="prof"><img src="assets/equipe/murilo.jpg" alt=""></td><td class="enc">Representação de grafos</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">sex 23/10</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Entrega da Sprint 1</td><td class="eixo">Orientação</td></tr>
+    </table>
+    <aside class="notas">Semana 2 (19 a 23/10). Quinta: Representação de grafos (Murilo), com autoestudo do Erickson (5.2 e 5.4; Dasgupta e Cormen como alternativas), base para a prova de conceito de rotas. Sexta: entrega da sprint 1 ao parceiro (proposta da solução e documentação).</aside>
+  </section>
+
+  <section class="slide" id="ferramentas" data-modelo="logos-de-ferramentas">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="logos">
+      <div class="ferramenta"><div class="cartao"><img src="assets/ferramentas/ros.svg" alt="ROS"></div><p class="versao">ROS 2 Jazzy</p></div>
+      <div class="ferramenta"><div class="cartao"><img src="assets/ferramentas/ubuntu.svg" alt="Ubuntu"></div><p class="versao">Ubuntu 24.04 LTS</p></div>
+    </div>
+    <aside class="notas">Ferramentas do módulo: ROS 2 Jazzy sobre Ubuntu 24.04 LTS (a versão de Ubuntu que o Jazzy suporta). É nelas que rodam o Nav2, o TurtleBot 3 simulado e os tutoriais dos autoestudos. Vale chegar à aula de 27/10 (Revisão de ROS 2 e introdução ao Nav2) com o ambiente instalado.</aside>
+  </section>
+
+
+
+
+
+
+
+</main>
+<script>
+
+/* Fonte única do roadmap: a frase de cada sprint. Cada slide .linha-sprints mostra a linha inteira e a frase da sua sprint. */
+(function () {
+  const SPRINTS = [
+    "Definição do problema e proposta da solução",
+    "FAQ e integração com robô simulado",
+    "Assistente com IA e mapa da estação",
+    "Voz e troca de plataforma robótica",
+    "Validação com usuários e versão final",
+  ];
+  const x = (i) => 250 + i * 275;
+  document.querySelectorAll(".slide.linha-sprints").forEach((sec) => {
+    const atual = parseInt(sec.dataset.sprint, 10);
+    sec.insertAdjacentHTML("beforeend", '<div class="trilho"></div>');
+    SPRINTS.forEach((_, i) => {
+      const n = i + 1;
+      sec.insertAdjacentHTML("beforeend",
+        `<div class="marco${n <= atual ? " feito" : ""}${n === atual ? " atual" : ""}" style="left:${x(i)}px">` +
+        `<p class="nome">Sprint ${n}</p><span class="ponto"></span></div>`);
+    });
+    sec.insertAdjacentHTML("beforeend", `<p class="frase">${SPRINTS[atual - 1]}</p>`);
+  });
+})();
+
+/* #estacao: a multidão, gerada com posições fixas (pseudoaleatórias), atrás do passageiro. */
+(function () {
+  const caixa = document.querySelector("#estacao .multidao");
+  if (!caixa) return;
+  let semente = 7;
+  const rnd = () => (semente = (semente * 16807) % 2147483647) / 2147483647;
+  const cores = ["#b2b6bf", "#caced6", "#90a5e5"];
+  for (let i = 0; i < 140; i++) {
+    const w = 34 + rnd() * 34, x = 60 + rnd() * 960, y = 120 + rnd() * (880 - 120 - w * 1.5);
+    const dx = x - 570, dy = y - 560;
+    if (dx * dx + dy * dy < 170 * 170) continue;          /* espaço livre em volta do passageiro */
+    const cor = cores[Math.floor(rnd() * cores.length)];
+    caixa.insertAdjacentHTML("beforeend",
+      `<svg viewBox="0 0 200 300" style="left:${x.toFixed(0)}px; top:${y.toFixed(0)}px; width:${w.toFixed(0)}px">
+        <path d="M28 300 V236 Q28 176 100 176 Q172 176 172 236 V300 Z" fill="${cor}"/><circle cx="100" cy="104" r="50" fill="${cor}"/></svg>`);
+  }
+})();
+
+/* Fonte única da agenda: todos os slides .agenda são montados daqui. */
+(function () {
+  const AGENDA = ["Equipe", "Projeto", "Objetivos de aprendizagem", "Avaliação", "Sprint 1"];
+  const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
+  document.querySelectorAll(".slide.agenda").forEach((sec) => {
+    const agora = parseInt(sec.dataset.agora, 10);
+    const itens = h("div", "itens");
+    itens.append(h("p", "rotulo-agenda", "Agenda"));
+    AGENDA.forEach((t, i) => {
+      const p = h("p", "item" + (i < agora ? " passou" : i === agora ? " agora" : ""));
+      p.append(h("span", "marcador", String(i + 1).padStart(2, "0")), document.createTextNode(t));
+      itens.append(p);
+    });
+    sec.append(itens);
+  });
+})();
+</script>
+<script src="../../.design-system/js/deck.js"></script>
+</body>
+</html>

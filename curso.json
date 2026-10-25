@@ -1,0 +1,25 @@
+{
+  "titulo": "Navegação autônoma",
+  "subtitulo": "Módulo 8 · Graduação",
+  "instituicao": "Inteli",
+  "professor": "Rodrigo Nicola",
+  "descricao": "Materiais dos encontros: apresentações, roteiros e referências.",
+  "repositorio": "https://github.com/rmnicola/inteli-m8-encontros",
+  "aulas": [
+    {
+      "slug": "apresentacao-do-modulo",
+      "pasta": "apresentacao-do-modulo",
+      "data": "2026-10-14",
+      "titulo": "Apresentação do módulo",
+      "subtitulo": "Onboarding e Sprint Planning 1",
+      "apresentacao": "apresentacao/dist/index.html",
+      "referencias": [
+        {
+          "rotulo": "Diário de aprendizado",
+          "tipo": "PDF",
+          "link": "https://drive.google.com/file/d/1kLuh6e3R_vGkuLnojRLH6Qj-Q2B3zltM/view?usp=sharing"
+        }
+      ]
+    }
+  ]
+}
