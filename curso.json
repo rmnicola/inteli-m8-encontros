@@ -38,6 +38,21 @@
           "rotulo": "Enviar a ficha preenchida",
           "tipo": "formulário",
           "link": "https://docs.google.com/forms/d/e/1FAIpQLSfWxDzHo41fDGr-HL0rJHnvAW3DVOX7mjoUIM7xkXina5uN6w/viewform"
+        },
+        {
+          "rotulo": "Desafio 1: sistema 1 na árvore de comportamento",
+          "tipo": "PDF",
+          "arquivo": "desafios/desafio-1-sistema-1.pdf"
+        },
+        {
+          "rotulo": "Desafio 2: SLAM visual e navegação semântica",
+          "tipo": "PDF",
+          "arquivo": "desafios/desafio-2-slam-visual.pdf"
+        },
+        {
+          "rotulo": "Desafio 3: uma frota, um atendente (sistemas multirrobô)",
+          "tipo": "PDF",
+          "arquivo": "desafios/desafio-3-frota.pdf"
         }
       ]
     }

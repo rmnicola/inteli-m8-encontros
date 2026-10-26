@@ -66,6 +66,153 @@
 .linha-sprints .marco.atual .ponto { width: 40px; height: 40px; margin-left: -20px; top: 101px; }
 .linha-sprints .frase { position: absolute; top: 500px; left: var(--margem-x); right: var(--margem-x); text-align: center;
   font-weight: 700; font-size: 56px; line-height: 1.15; }
+/* .fluxo-detalhes: fluxograma de etapas (passo 0); no passo k, a etapa k fica em destaque e o seu detalhe aparece embaixo.
+   O número de etapas vem de --n no style do slide. Usado em #revisao e #validar-desafio. */
+.fluxo-detalhes .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.fluxo-detalhes .fluxo { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 200px;
+  display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 48px; }
+.fluxo-detalhes .no { position: relative; background: var(--branco); border-radius: 18px; padding: 22px 14px; text-align: center;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 30px; line-height: 1.15; transition: background .3s, color .3s; }
+.fluxo-detalhes .no + .no::before { content: ""; position: absolute; left: -40px; top: 50%; margin-top: -11px; border: 11px solid transparent; border-left: 20px solid var(--coral); border-right: 0; }
+.fluxo-detalhes .detalhe-r { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 360px; display: none;
+  background: var(--branco); border-radius: 24px; padding: 44px 56px; flex-direction: column; gap: 22px; }
+.fluxo-detalhes .detalhe-r .quando { font-family: var(--f-destaque); font-weight: 700; font-size: 30px; text-transform: uppercase; color: var(--destaque); }
+.fluxo-detalhes .detalhe-r .texto-r { font-size: 40px; line-height: 1.3; }
+.fluxo-detalhes .detalhe-r .saidas { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.fluxo-detalhes .detalhe-r .saida { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; padding: 12px 22px; border-radius: 999px; background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="1"] .no.n1 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="1"] .detalhe-r.d1 { display: flex; }
+.fluxo-detalhes[data-estado="2"] .no.n2 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="2"] .detalhe-r.d2 { display: flex; }
+.fluxo-detalhes[data-estado="3"] .no.n3 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="3"] .detalhe-r.d3 { display: flex; }
+.fluxo-detalhes[data-estado="4"] .no.n4 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="4"] .detalhe-r.d4 { display: flex; }
+.fluxo-detalhes[data-estado="5"] .no.n5 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="5"] .detalhe-r.d5 { display: flex; }
+.fluxo-detalhes[data-estado="6"] .no.n6 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="6"] .detalhe-r.d6 { display: flex; }
+/* #desafio-1-visual: o desafio 1 sem texto. À esquerda, a árvore de comportamento; as condições escritas à mão
+   (elipses) dão lugar a um nó de sistema 1 (raio). À direita, o que ele devolve: probabilidades. Confiante, age;
+   em dúvida, escala para o modelo lento (ampulheta) ou pergunta ao passageiro. */
+#desafio-1-visual svg { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+#desafio-1-visual .aresta { stroke: var(--roxo); stroke-width: 4; fill: none; }
+#desafio-1-visual .seta { stroke: var(--coral); stroke-width: 6; fill: none; }
+#desafio-1-visual .controle { fill: var(--roxo); }
+#desafio-1-visual .acao { fill: var(--verde); }
+#desafio-1-visual .condicao { fill: var(--lilas); }
+#desafio-1-visual .rapido { fill: var(--coral); }
+#desafio-1-visual .icone { fill: none; stroke: var(--branco); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+#desafio-1-visual .cartao { fill: var(--branco); }
+#desafio-1-visual .barra { fill: var(--cinza-escuro); }
+#desafio-1-visual .barra.alta { fill: var(--roxo); }
+#desafio-1-visual .base { stroke: var(--roxo); stroke-width: 3; }
+#desafio-1-visual .termo { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; fill: var(--coral-texto); }
+#desafio-1-visual .rot { font-family: var(--f-texto); font-weight: 700; font-size: 28px; fill: var(--roxo); }
+#desafio-1-visual .rot.suave { fill: var(--texto-suave); }
+/* #desafio-2-visual: o desafio 2 sem texto. O robô anda e vai montando o grafo de poses (um nó por passo), com
+   deriva; num dos quadros-chave encontra o elevador, uma âncora semântica presa a esse nó. Ao voltar ao início, o
+   fechamento de laço move o grafo inteiro (transição de cx/cy e d), e o elevador vai junto. Gravado em coordenadas
+   fixas do mundo, ele teria ficado para trás (o fantasma). Por fim, o mapa vai para a esquerda e entra a pergunta:
+   sucesso × erro de pose. A geometria é gerada uma vez; as posições corrigidas ficam no CSS dos estados 12 a 14. */
+#desafio-2-visual svg { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+#desafio-2-visual .mapa { transition: transform .9s ease; }
+#desafio-2-visual[data-estado="14"] .mapa { transform: translateX(-300px); }
+#desafio-2-visual .aresta { stroke: var(--roxo); stroke-width: 5; fill: none; transition: d .9s ease; }
+#desafio-2-visual .no { fill: var(--roxo); transition: cx .9s ease, cy .9s ease; }
+#desafio-2-visual .no.inicio { fill: var(--coral); }
+#desafio-2-visual .laco { stroke: var(--coral); stroke-width: 6; fill: none; stroke-dasharray: 14 10; transition: d .9s ease; }
+#desafio-2-visual .ancora { stroke: var(--verde); stroke-width: 5; fill: none; stroke-dasharray: 4 9; stroke-linecap: round; transition: d .9s ease; }
+#desafio-2-visual .elevador { transition: transform .9s ease; }
+#desafio-2-visual .elevador .caixa { fill: var(--verde); }
+#desafio-2-visual .fantasma .caixa { fill: var(--lilas); }
+#desafio-2-visual .porta, #desafio-2-visual .indicador { fill: var(--branco); }
+#desafio-2-visual .cartao { fill: var(--branco); }
+#desafio-2-visual .eixo { stroke: var(--roxo); stroke-width: 3; fill: none; }
+#desafio-2-visual .curva { stroke-width: 7; fill: none; stroke-linecap: round; }
+#desafio-2-visual .curva.mundo { stroke: var(--lilas); }
+#desafio-2-visual .curva.ancorado { stroke: var(--verde); }
+#desafio-2-visual .rot { font-family: var(--f-texto); font-weight: 700; font-size: 28px; fill: var(--roxo); }
+#desafio-2-visual .rot.suave { fill: var(--texto-suave); }
+#desafio-2-visual .interroga { font-family: var(--f-texto); font-weight: 800; font-size: 56px; fill: var(--coral-texto); }
+#desafio-2-visual[data-estado="12"] .no.n0,#desafio-2-visual[data-estado="13"] .no.n0,#desafio-2-visual[data-estado="14"] .no.n0 { cx: 420px; cy: 700px; }
+#desafio-2-visual[data-estado="12"] .no.n1,#desafio-2-visual[data-estado="13"] .no.n1,#desafio-2-visual[data-estado="14"] .no.n1 { cx: 420px; cy: 540px; }
+#desafio-2-visual[data-estado="12"] .no.n2,#desafio-2-visual[data-estado="13"] .no.n2,#desafio-2-visual[data-estado="14"] .no.n2 { cx: 420px; cy: 380px; }
+#desafio-2-visual[data-estado="12"] .no.n3,#desafio-2-visual[data-estado="13"] .no.n3,#desafio-2-visual[data-estado="14"] .no.n3 { cx: 580px; cy: 320px; }
+#desafio-2-visual[data-estado="12"] .no.n4,#desafio-2-visual[data-estado="13"] .no.n4,#desafio-2-visual[data-estado="14"] .no.n4 { cx: 780px; cy: 320px; }
+#desafio-2-visual[data-estado="12"] .no.n5,#desafio-2-visual[data-estado="13"] .no.n5,#desafio-2-visual[data-estado="14"] .no.n5 { cx: 980px; cy: 380px; }
+#desafio-2-visual[data-estado="12"] .no.n6,#desafio-2-visual[data-estado="13"] .no.n6,#desafio-2-visual[data-estado="14"] .no.n6 { cx: 980px; cy: 540px; }
+#desafio-2-visual[data-estado="12"] .no.n7,#desafio-2-visual[data-estado="13"] .no.n7,#desafio-2-visual[data-estado="14"] .no.n7 { cx: 980px; cy: 700px; }
+#desafio-2-visual[data-estado="12"] .no.n8,#desafio-2-visual[data-estado="13"] .no.n8,#desafio-2-visual[data-estado="14"] .no.n8 { cx: 780px; cy: 760px; }
+#desafio-2-visual[data-estado="12"] .no.n9,#desafio-2-visual[data-estado="13"] .no.n9,#desafio-2-visual[data-estado="14"] .no.n9 { cx: 580px; cy: 760px; }
+#desafio-2-visual[data-estado="12"] .aresta.a1,#desafio-2-visual[data-estado="13"] .aresta.a1,#desafio-2-visual[data-estado="14"] .aresta.a1 { d: path("M420,700 L420,540"); }
+#desafio-2-visual[data-estado="12"] .aresta.a2,#desafio-2-visual[data-estado="13"] .aresta.a2,#desafio-2-visual[data-estado="14"] .aresta.a2 { d: path("M420,540 L420,380"); }
+#desafio-2-visual[data-estado="12"] .aresta.a3,#desafio-2-visual[data-estado="13"] .aresta.a3,#desafio-2-visual[data-estado="14"] .aresta.a3 { d: path("M420,380 L580,320"); }
+#desafio-2-visual[data-estado="12"] .aresta.a4,#desafio-2-visual[data-estado="13"] .aresta.a4,#desafio-2-visual[data-estado="14"] .aresta.a4 { d: path("M580,320 L780,320"); }
+#desafio-2-visual[data-estado="12"] .aresta.a5,#desafio-2-visual[data-estado="13"] .aresta.a5,#desafio-2-visual[data-estado="14"] .aresta.a5 { d: path("M780,320 L980,380"); }
+#desafio-2-visual[data-estado="12"] .aresta.a6,#desafio-2-visual[data-estado="13"] .aresta.a6,#desafio-2-visual[data-estado="14"] .aresta.a6 { d: path("M980,380 L980,540"); }
+#desafio-2-visual[data-estado="12"] .aresta.a7,#desafio-2-visual[data-estado="13"] .aresta.a7,#desafio-2-visual[data-estado="14"] .aresta.a7 { d: path("M980,540 L980,700"); }
+#desafio-2-visual[data-estado="12"] .aresta.a8,#desafio-2-visual[data-estado="13"] .aresta.a8,#desafio-2-visual[data-estado="14"] .aresta.a8 { d: path("M980,700 L780,760"); }
+#desafio-2-visual[data-estado="12"] .aresta.a9,#desafio-2-visual[data-estado="13"] .aresta.a9,#desafio-2-visual[data-estado="14"] .aresta.a9 { d: path("M780,760 L580,760"); }
+#desafio-2-visual[data-estado="12"] .laco,#desafio-2-visual[data-estado="13"] .laco,#desafio-2-visual[data-estado="14"] .laco { d: path("M580,760 C490,830 440,790 420,700"); }
+#desafio-2-visual[data-estado="12"] .ancora,#desafio-2-visual[data-estado="13"] .ancora,#desafio-2-visual[data-estado="14"] .ancora { d: path("M980,700 L1110,660"); }
+#desafio-2-visual[data-estado="12"] .elevador,#desafio-2-visual[data-estado="13"] .elevador,#desafio-2-visual[data-estado="14"] .elevador { transform: translate(-70px, 84px); }
+/* #desafio-3-visual: o desafio 3 sem texto. A estação como grafo (mezanino em cima, plataforma embaixo, escada e
+   elevador ligando os dois) e uma frota de três corpos: tablet (fixo na entrada), TurtleBot 3 (círculo) e Go2 (patas).
+   Cada passo mostra uma lacuna: pedidos, alocação, tráfego do par robô+passageiro, emergência, aviso filtrado por
+   corpo, passagem de contexto e, no fim, a frota ligada como um atendente só. Robôs e passageiros se movem por
+   transform nos estados 0 a 7. */
+#desafio-3-visual > svg { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+#desafio-3-visual .painel-d3 { position: absolute; left: 1080px; top: 170px; width: 450px; height: 660px; background: var(--branco); border-radius: 28px; }
+#desafio-3-visual .etapa { position: absolute; left: 40px; right: 36px; top: 40px; }
+#desafio-3-visual .etapa .rotulo-termo { position: static; margin: 0 0 18px; }
+#desafio-3-visual .frase-d3 { margin: 0; font-weight: 700; font-size: 38px; line-height: 1.22; color: var(--roxo); }
+#desafio-3-visual .legenda-d3 { position: absolute; left: 40px; right: 36px; bottom: 34px; display: flex; flex-direction: column; gap: 10px;
+  border-top: 3px solid var(--cinza-claro); padding-top: 22px; }
+#desafio-3-visual .legenda-d3 p { margin: 0; display: flex; align-items: center; gap: 18px; font-size: 28px; color: var(--texto-suave); }
+#desafio-3-visual .legenda-d3 svg { width: 52px; height: 40px; flex: none; }
+#desafio-3-visual .aresta { stroke: var(--roxo); stroke-width: 6; fill: none; }
+#desafio-3-visual .degraus { stroke: var(--roxo); stroke-width: 34; stroke-dasharray: 5 15; fill: none; }
+#desafio-3-visual .no { fill: var(--branco); stroke: var(--roxo); stroke-width: 5; }
+#desafio-3-visual .robo { fill: var(--roxo); }
+#desafio-3-visual .perna { stroke: var(--roxo); stroke-width: 7; stroke-linecap: round; }
+#desafio-3-visual .tela { fill: var(--branco); }
+#desafio-3-visual .pessoa { fill: var(--verde); stroke: var(--roxo); stroke-width: 3; }
+#desafio-3-visual .par { fill: var(--lilas); opacity: .55; }
+#desafio-3-visual .balao { fill: var(--branco); }
+#desafio-3-visual .ponto { fill: var(--roxo); }
+#desafio-3-visual .liga { stroke: var(--coral); stroke-width: 6; fill: none; stroke-dasharray: 14 10; stroke-linecap: round; }
+#desafio-3-visual .rede { stroke: var(--coral); stroke-width: 5; fill: none; stroke-dasharray: 4 12; stroke-linecap: round; }
+#desafio-3-visual .alerta { fill: var(--coral); }
+#desafio-3-visual .anel { stroke: var(--coral); stroke-width: 6; fill: none; }
+#desafio-3-visual .xis { stroke: var(--coral); stroke-width: 12; stroke-linecap: round; }
+#desafio-3-visual .elevador .caixa { fill: var(--verde); stroke: var(--roxo); stroke-width: 3; }
+#desafio-3-visual .elevador .porta { fill: var(--branco); }
+#desafio-3-visual .cartao { fill: var(--branco); stroke: var(--roxo); stroke-width: 4; }
+#desafio-3-visual .linha-cartao { stroke: var(--roxo); stroke-width: 5; stroke-linecap: round; }
+#desafio-3-visual .termo { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; fill: var(--coral-texto); }
+#desafio-3-visual .rot { font-family: var(--f-texto); font-weight: 700; font-size: 42px; fill: var(--roxo); }
+#desafio-3-visual .sinal { font-family: var(--f-texto); font-weight: 800; font-size: 60px; fill: var(--branco); }
+#desafio-3-visual .interroga { font-family: var(--f-texto); font-weight: 800; font-size: 80px; fill: var(--coral-texto); }
+#desafio-3-visual .movel { transition: transform .9s ease, opacity .6s ease; }
+#desafio-3-visual .pa, #desafio-3-visual .pb, #desafio-3-visual .pc { opacity: 0; }
+#desafio-3-visual .tb3 { transform: translate(240px, 720px); }
+#desafio-3-visual[data-estado="3"] .tb3,#desafio-3-visual[data-estado="4"] .tb3 { transform: translate(930px, 720px); }
+#desafio-3-visual[data-estado="5"] .tb3 { transform: translate(640px, 720px); }
+#desafio-3-visual[data-estado="6"] .tb3,#desafio-3-visual[data-estado="7"] .tb3 { transform: translate(780px, 720px); }
+#desafio-3-visual .go2 { transform: translate(1400px, 290px); }
+#desafio-3-visual[data-estado="3"] .go2 { transform: translate(760px, 720px); }
+#desafio-3-visual[data-estado="4"] .go2,#desafio-3-visual[data-estado="5"] .go2,#desafio-3-visual[data-estado="6"] .go2,#desafio-3-visual[data-estado="7"] .go2 { transform: translate(1040px, 290px); }
+#desafio-3-visual .pa { transform: translate(700px, 290px); }
+#desafio-3-visual[data-estado="3"] .pa { transform: translate(700px, 720px); }
+#desafio-3-visual[data-estado="4"] .pa,#desafio-3-visual[data-estado="5"] .pa { transform: translate(720px, 720px); }
+#desafio-3-visual[data-estado="6"] .pa,#desafio-3-visual[data-estado="7"] .pa { transform: translate(720px, 720px); }
+#desafio-3-visual .pb { transform: translate(1460px, 720px); }
+#desafio-3-visual[data-estado="3"] .pb,#desafio-3-visual[data-estado="4"] .pb { transform: translate(990px, 720px); }
+#desafio-3-visual[data-estado="1"] .pa,#desafio-3-visual[data-estado="2"] .pa,#desafio-3-visual[data-estado="3"] .pa,#desafio-3-visual[data-estado="4"] .pa,#desafio-3-visual[data-estado="5"] .pa,#desafio-3-visual[data-estado="6"] .pa,#desafio-3-visual[data-estado="7"] .pa { opacity: 1; }
+#desafio-3-visual[data-estado="1"] .pb,#desafio-3-visual[data-estado="2"] .pb,#desafio-3-visual[data-estado="3"] .pb,#desafio-3-visual[data-estado="4"] .pb { opacity: 1; }
+#desafio-3-visual[data-estado="1"] .pc,#desafio-3-visual[data-estado="2"] .pc { opacity: 1; }
 </style>
 </head>
 <body>
@@ -107,6 +254,220 @@
 
   <section class="slide agenda curta" data-agora="1">
     <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: revisão da validação e desafios.</aside>
+  </section>
+
+  <section class="slide fluxo-detalhes" id="revisao" data-modelo="fluxo-com-detalhes" data-max-palavras="110" style="--n: 4">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Revisão da validação</h2>
+    <div class="fluxo"><div class="no n1">Devolução</div><div class="no n2">Pedido</div><div class="no n3">Conversa</div><div class="no n4">Decisão</div></div>
+    <div class="detalhe-r d1"><p class="quando">Segunda-feira da semana das notas</p><p class="texto-r">Junto com a publicação das notas, cada aluno recebe a sua validação de aprendizagem corrigida.</p></div>
+    <div class="detalhe-r d2"><p class="quando">Até quarta-feira, véspera da revisão</p><p class="texto-r">Quem quiser revisar manda um pedido pelo Slack, já com a argumentação: o que quer revisar e por quê.</p></div>
+    <div class="detalhe-r d3"><p class="quando">Quinta-feira, no período de autoestudo</p><p class="texto-r">Conversa presencial e rápida sobre o pedido enviado. Chego preparado: o que vale é a argumentação do pedido.</p></div>
+    <div class="detalhe-r d4"><p class="quando">Depois da conversa</p><p class="texto-r">O pedido é deferido, indeferido ou fica em investigação, quando o caso precisa ser analisado com mais cuidado.</p></div>
+    <i class="passo" data-passo="1"></i><i class="passo" data-passo="2"></i><i class="passo" data-passo="3"></i><i class="passo" data-passo="4"></i>
+    <aside class="notas">Passo 0: o fluxo inteiro. Passos 1 a 4: cada etapa, com o que é e quando acontece (um texto por vez na tela, por volta de 30 palavras). 1) Devolução: na segunda-feira em que as notas são publicadas. 2) Pedido pelo Slack até a véspera (quarta), com a argumentação do que quer revisar e por quê. 3) Conversa presencial na quinta, no período de autoestudo; chego preparado e a conversa tende a ser rápida. 4) Decisão: defiro, indefiro ou decido que preciso investigar melhor o caso.</aside>
+  </section>
+
+
+  <section class="slide fluxo-detalhes" id="validar-desafio" data-modelo="fluxo-com-detalhes" data-max-palavras="170" style="--n: 6">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Como validar um desafio</h2>
+    <div class="fluxo"><div class="no n1">Proposta</div><div class="no n2">Short paper</div><div class="no n3">Entrega</div><div class="no n4">Análise</div><div class="no n5">Arguição</div><div class="no n6">Aprovação</div></div>
+    <div class="detalhe-r d1"><p class="quando">Antes de começar</p><p class="texto-r">Escolha um desafio e me avise que vai trabalhar nele, contando a estratégia de solução que pretende seguir. Posso marcar uma mentoria para ajudar.</p></div>
+    <div class="detalhe-r d2"><p class="quando">Durante o desenvolvimento</p><p class="texto-r">Desenvolva a solução e escreva o resultado como short paper, no template que vou fornecer.</p></div>
+    <div class="detalhe-r d3"><p class="quando">Pelo Slack</p><p class="texto-r">Envie o short paper com uma mensagem dizendo por que o trabalho é uma inovação e onde você acha que podemos publicá-lo.</p></div>
+    <div class="detalhe-r d4"><p class="quando">Mérito da entrega</p><p class="texto-r">Avalio o mérito e decido o próximo passo. Rejeição e mentoria permitem reentrega.</p><div class="saidas"><p class="saida">Está boa → arguição</p><p class="saida">Abaixo do desafio → rejeição</p><p class="saida">Falta refinar → mentoria</p></div></div>
+    <div class="detalhe-r d5"><p class="quando">Presencial</p><p class="texto-r">Faço perguntas técnicas sobre o seu trabalho e sobre os conteúdos do módulo. Se eu sair insatisfeito, nego o pedido ou marco uma nova data para você se preparar melhor.</p></div>
+    <div class="detalhe-r d6"><p class="quando">Desafio aprovado</p><p class="texto-r">Você escolhe as duas notas que serão alteradas. O trabalho provavelmente é publicável: vamos atrás da publicação, que também rende horas complementares.</p></div>
+    <i class="passo" data-passo="1"></i><i class="passo" data-passo="2"></i><i class="passo" data-passo="3"></i><i class="passo" data-passo="4"></i><i class="passo" data-passo="5"></i><i class="passo" data-passo="6"></i>
+    <aside class="notas">Passo 0: o fluxo inteiro. Depois, uma etapa por passo. 1) Proposta: o aluno escolhe o desafio e me comunica, obrigatoriamente com a estratégia de solução que está pensando; posso marcar uma mentoria. 2) Short paper: desenvolve e formata como short paper (template fornecido). 3) Entrega pelo Slack, com uma mensagem que deixe claro por que o trabalho é uma inovação e uma sugestão de onde publicar. 4) Análise do mérito: (a) está boa, marco a arguição; (b) não está à altura do desafio, rejeito; (c) há valor mas falta refinamento, marco uma mentoria. (b) e (c) permitem reentrega. 5) Arguição: perguntas técnicas que validam que o aluno sabe sobre o próprio trabalho e absorveu os conteúdos do módulo; se eu sair insatisfeito, nego o pedido ou dou uma segunda chance com nova data. 6) Aprovado: o aluno escolhe as duas notas que serão alteradas; o trabalho provavelmente é publicável, então perseguimos a publicação, o que também rende horas complementares.</aside>
+  </section>
+
+  <section class="slide" id="desafio-1-visual" data-modelo="diagrama-com-rotulos">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <svg viewBox="0 0 1600 900" aria-label="Desafio 1: um nó de sistema 1 no lugar das condições da árvore de comportamento">
+      <defs>
+        <marker id="d1-ponta" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ff4545"/></marker>
+      </defs>
+      <text class="termo" x="120" y="110">ÁRVORE DE COMPORTAMENTO</text>
+      <!-- árvore: arestas fixas -->
+      <path class="aresta" d="M480,250 L280,390 M480,250 L480,390 M480,250 L680,390"/>
+      <g class="passo" data-passo="0" data-sai="1"><path class="aresta" d="M480,480 L380,600 M480,480 L580,600"/></g>
+      <g class="passo" data-passo="1"><path class="aresta" d="M480,480 L480,580"/></g>
+      <!-- raiz: sequência -->
+      <rect class="controle" x="435" y="160" width="90" height="90" rx="16"/>
+      <path class="icone" d="M455,205 H502 M488,190 L503,205 L488,220"/>
+      <!-- nível 2: ação, seletor, ação -->
+      <rect class="acao" x="190" y="390" width="180" height="80" rx="18"/>
+      <text class="rot" x="280" y="440" text-anchor="middle">planejar</text>
+      <rect class="controle" x="435" y="390" width="90" height="90" rx="16"/>
+      <path class="icone" d="M455,435 H475 L500,415 M475,435 L500,455"/>
+      <rect class="acao" x="590" y="390" width="180" height="80" rx="18"/>
+      <text class="rot" x="680" y="440" text-anchor="middle">seguir</text>
+      <!-- nível 3: condições escritas à mão, depois o nó de sistema 1 -->
+      <g class="passo" data-passo="0" data-sai="1">
+        <ellipse class="condicao" cx="380" cy="640" rx="80" ry="44"/>
+        <ellipse class="condicao" cx="580" cy="640" rx="80" ry="44"/>
+        <text class="rot suave" x="480" y="730" text-anchor="middle">regras fixas</text>
+      </g>
+      <g class="passo" data-passo="1">
+        <circle class="rapido" cx="480" cy="650" r="72"/>
+        <path d="M494,604 L452,660 L478,660 L466,698 L510,638 L484,638 Z" fill="#ffffff"/>
+        <text class="termo" x="480" y="768" text-anchor="middle">SISTEMA 1</text>
+      </g>
+      <!-- à direita: o que o sistema 1 devolve -->
+      <g class="passo" data-passo="2">
+        <path class="seta" d="M560,650 C700,650 760,560 880,560" marker-end="url(#d1-ponta)"/>
+        <rect class="cartao" x="900" y="260" width="580" height="560" rx="28"/>
+        <line class="base" x1="940" y1="680" x2="1290" y2="680"/>
+        <text class="rot" x="990" y="725" text-anchor="middle">girar</text>
+        <text class="rot" x="1115" y="725" text-anchor="middle">esperar</text>
+        <text class="rot" x="1240" y="725" text-anchor="middle">voltar</text>
+      </g>
+      <g class="passo" data-passo="2" data-sai="3">
+        <rect class="barra alta" x="960" y="420" width="60" height="260" rx="6"/>
+        <rect class="barra" x="1085" y="630" width="60" height="50" rx="6"/>
+        <rect class="barra" x="1210" y="650" width="60" height="30" rx="6"/>
+        <circle cx="1390" cy="520" r="62" fill="#89cea5"/>
+        <path class="icone" d="M1362,522 L1382,542 L1420,500" style="stroke: var(--roxo); stroke-width: 10"/>
+        <text class="rot" x="1390" y="625" text-anchor="middle">age</text>
+      </g>
+      <g class="passo" data-passo="3">
+        <rect class="barra" x="960" y="540" width="60" height="140" rx="6"/>
+        <rect class="barra" x="1085" y="552" width="60" height="128" rx="6"/>
+        <rect class="barra" x="1210" y="560" width="60" height="120" rx="6"/>
+        <path class="seta" d="M1300,540 L1340,430" marker-end="url(#d1-ponta)"/>
+        <path class="seta" d="M1300,600 L1340,660" marker-end="url(#d1-ponta)"/>
+        <!-- modelo lento: ampulheta -->
+        <rect class="controle" x="1350" y="300" width="100" height="100" rx="18"/>
+        <path class="icone" d="M1377,322 H1423 M1377,378 H1423 M1382,322 L1418,378 M1418,322 L1382,378"/>
+        <text class="rot" x="1400" y="445" text-anchor="middle">LLM</text>
+        <!-- passageiro -->
+        <circle cx="1400" cy="630" r="22" fill="#2e2640"/>
+        <path d="M1360,712 Q1360,660 1400,660 Q1440,660 1440,712 Z" fill="#2e2640"/>
+        <text class="rot" x="1400" y="760" text-anchor="middle">passageiro</text>
+      </g>
+    </svg>
+    <aside class="notas">Desafio 1, sem texto. Passo 0: uma árvore de comportamento como a do Nav2: nós de controle (roxo; sequência e seletor), ações (verde) e condições (lilás), que hoje são regras escritas à mão. Passo 1: as condições "semânticas" (qual recuperação aplicar, o destino está bloqueado por multidão, vale ir ao ponto equivalente) dão lugar a um nó de sistema 1 (o raio): um modelo rápido como o Jev ou o Laya, que recebe o estado do robô em texto e responde perguntas tipadas numa única passada. Passo 2: ele não gera texto, devolve probabilidades; quando uma opção domina, o robô age. Passo 3: quando as opções empatam, o robô não decide sozinho: escala para um modelo lento (LLM, a ampulheta: a latência que queremos evitar no caso comum) ou pergunta ao passageiro. A pergunta do desafio: isso é tão robusto quanto a árvore, mais barato que um LLM em cada nó, e a probabilidade é confiável para decidir quando parar? O PDF completo do desafio, com as quatro lacunas sugeridas, está no card e no site.</aside>
+  </section>
+
+  <section class="slide" id="desafio-2-visual" data-modelo="diagrama-com-rotulos">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <svg viewBox="0 0 1600 900" aria-label="Desafio 2: o robô monta o grafo de poses, encontra o elevador e o fechamento de laço move o grafo inteiro">
+      <g class="mapa">
+        <!-- o fantasma: onde o elevador teria ficado se fosse gravado em coordenadas fixas do mundo -->
+        <g class="passo" data-passo="13"><g class="fantasma"><rect class="caixa" x="1134" y="520" width="92" height="112" rx="12"/><path class="indicador" d="M1158,546 L1168,532 L1178,546 Z M1182,532 L1202,532 L1192,546 Z"/><rect class="porta" x="1146" y="556" width="31" height="64" rx="3"/><rect class="porta" x="1183" y="556" width="31" height="64" rx="3"/></g><text class="interroga" x="1238" y="526">?</text></g>
+        <!-- o fechamento de laço: do último nó de volta ao primeiro -->
+        <g class="passo" data-passo="11"><path class="laco" d="M670,652 C580,722 440,790 420,700"/></g>
+        <!-- a âncora semântica, presa ao quadro-chave 7 -->
+        <g class="passo" data-passo="8"><path class="ancora" d="M1050,616 L1180,576"/><g class="elevador"><rect class="caixa" x="1134" y="520" width="92" height="112" rx="12"/><path class="indicador" d="M1158,546 L1168,532 L1178,546 Z M1182,532 L1202,532 L1192,546 Z"/><rect class="porta" x="1146" y="556" width="31" height="64" rx="3"/><rect class="porta" x="1183" y="556" width="31" height="64" rx="3"/></g></g>
+        <!-- o grafo de poses, um nó por passo -->
+          <g class="passo" data-passo="0"><circle class="no inicio n0" cx="420" cy="700" r="17"/></g>
+          <g class="passo" data-passo="1"><path class="aresta a1" d="M420,700 L430,528"/><circle class="no n1" cx="430" cy="528" r="17"/></g>
+          <g class="passo" data-passo="2"><path class="aresta a2" d="M430,528 L440,356"/><circle class="no n2" cx="440" cy="356" r="17"/></g>
+          <g class="passo" data-passo="3"><path class="aresta a3" d="M440,356 L610,284"/><circle class="no n3" cx="610" cy="284" r="17"/></g>
+          <g class="passo" data-passo="4"><path class="aresta a4" d="M610,284 L820,272"/><circle class="no n4" cx="820" cy="272" r="17"/></g>
+          <g class="passo" data-passo="5"><path class="aresta a5" d="M820,272 L1030,320"/><circle class="no n5" cx="1030" cy="320" r="17"/></g>
+          <g class="passo" data-passo="6"><path class="aresta a6" d="M1030,320 L1040,468"/><circle class="no n6" cx="1040" cy="468" r="17"/></g>
+          <g class="passo" data-passo="7"><path class="aresta a7" d="M1040,468 L1050,616"/><circle class="no n7" cx="1050" cy="616" r="17"/></g>
+          <g class="passo" data-passo="9"><path class="aresta a8" d="M1050,616 L860,664"/><circle class="no n8" cx="860" cy="664" r="17"/></g>
+          <g class="passo" data-passo="10"><path class="aresta a9" d="M860,664 L670,652"/><circle class="no n9" cx="670" cy="652" r="17"/></g>
+      </g>
+      <!-- a pergunta do desafio: sucesso da navegação semântica contra o erro de pose -->
+      <g class="passo" data-passo="14">
+        <rect class="cartao" x="1000" y="190" width="500" height="640" rx="28"/>
+        <path class="curva ancorado" d="M1044,256 H1094"/><text class="rot" x="1110" y="266">quadro-chave</text>
+        <path class="curva mundo" d="M1044,306 H1094"/><text class="rot" x="1110" y="316">mundo</text>
+        <path class="eixo" d="M1080,370 V720 H1460"/>
+        <path class="curva ancorado" d="M1090,392 C1220,397 1330,450 1450,505"/>
+        <path class="curva mundo" d="M1090,392 C1180,402 1260,630 1450,695"/>
+        <text class="rot suave" x="1270" y="775" text-anchor="middle">erro de pose</text>
+        <text class="rot suave" x="1052" y="545" text-anchor="middle" transform="rotate(-90 1052 545)">sucesso</text>
+      </g>
+    </svg>
+    <i class="passo" data-passo="12"></i>
+    <aside class="notas">Desafio 2, sem texto. Passos 0 a 7: o robô sai do ponto coral e anda; a cada quadro-chave, um nó novo no grafo de poses, ligado ao anterior pela odometria. A pose deriva aos poucos (repare que a volta vai "abrindo"). Passo 8: num dos quadros-chave, a RealSense vê um elevador; o detector o reconhece e ele entra no mapa como âncora semântica, presa àquele nó. Passos 9 e 10: o robô segue e volta perto do início, mas o grafo não fecha. Passo 11: o robô reconhece o lugar de partida e entra a aresta de fechamento de laço. Passo 12: a otimização mexe no grafo inteiro para o laço fechar, e o elevador, preso ao seu quadro-chave, vai junto. Passo 13: se o elevador tivesse sido gravado em coordenadas fixas do mundo, ficaria para trás, no lugar errado (o fantasma), e "me leva até o elevador" levaria o passageiro para lá; ao rever o elevador, o robô ainda criaria uma duplicata. Passo 14: a pergunta do desafio. A navegação semântica quase sempre é avaliada com a pose perfeita do simulador, e os trabalhos que juntam SLAM visual e mapa semântico medem o mapa, não a navegação. Quanto a navegação semântica perde quando a pose vem do SLAM, e quanto a forma de guardar o mapa muda isso? As curvas são hipotéticas: é o gráfico que o artigo deve produzir. Medimos em Gazebo (pose perfeita como teto) e com a câmera real no campus, no TurtleBot 3 e no Go2. O PDF completo, com as cinco lacunas sugeridas, está no site.</aside>
+  </section>
+
+  <section class="slide" id="desafio-3-visual" data-modelo="diagrama-com-rotulos" data-max-palavras="110">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <svg viewBox="0 0 1600 900" aria-label="Desafio 3: uma frota de três robôs diferentes atendendo a estação como um atendente só">
+      <g transform="translate(-30,150) scale(0.68)">
+      <!-- a estação: mezanino (y=290) e plataforma (y=720), ligados por escada e elevador -->
+      <path class="aresta" d="M240,290 H1400 M240,720 H1400 M1040,290 V720"/>
+      <path class="aresta" d="M625,290 V720 M655,290 V720"/>
+      <path class="degraus" d="M640,312 V700"/>
+      <g class="elevador"><rect class="caixa" x="1012" y="470" width="56" height="70" rx="8"/><rect class="porta" x="1020" y="482" width="18" height="50" rx="2"/><rect class="porta" x="1042" y="482" width="18" height="50" rx="2"/></g>
+      <circle class="no" cx="240" cy="290" r="22"/><circle class="no" cx="640" cy="290" r="22"/><circle class="no" cx="1040" cy="290" r="22"/><circle class="no" cx="1400" cy="290" r="22"/>
+      <circle class="no" cx="240" cy="720" r="22"/><circle class="no" cx="640" cy="720" r="22"/><circle class="no" cx="1040" cy="720" r="22"/><circle class="no" cx="1400" cy="720" r="22"/>
+      <text class="rot" x="200" y="225" text-anchor="middle">entrada</text>
+      <text class="rot" x="1040" y="240" text-anchor="middle">banheiro</text>
+      <text class="rot" x="1400" y="240" text-anchor="middle">SSO</text>
+      <text class="rot" x="600" y="515" text-anchor="end">escada</text>
+      <text class="rot" x="1090" y="515">elevador</text>
+      <text class="rot" x="440" y="690" text-anchor="middle">plataforma</text>
+      <!-- pegada do par robô + passageiro -->
+      <g class="passo" data-passo="3" data-sai="5"><rect class="par" x="885" y="668" width="150" height="104" rx="52"/></g>
+      <g class="passo" data-passo="3" data-sai="4"><rect class="par" x="652" y="668" width="174" height="104" rx="52"/></g>
+      <g class="passo" data-passo="6"><rect class="par" x="678" y="668" width="148" height="104" rx="52"/></g>
+      <!-- emergência: a vítima no banheiro e a chamada à SSO -->
+      <g class="passo" data-passo="4"><g transform="translate(1140,322)"><circle class="pessoa" cx="-40" cy="0" r="15"/><rect class="pessoa" x="-22" y="-15" width="66" height="30" rx="15"/></g></g>
+      <g class="passo" data-passo="4" data-sai="5"><circle class="anel" cx="1140" cy="318" r="58"/><circle class="anel" cx="1400" cy="290" r="44"/><path class="liga" d="M1205,305 L1350,292"/></g>
+      <!-- a frota: tablet fixo na entrada, TurtleBot 3 e Go2 -->
+      <g transform="translate(170,290)"><rect class="robo" x="-26" y="-38" width="52" height="76" rx="9"/><rect class="tela" x="-18" y="-29" width="36" height="52" rx="3"/><circle class="tela" cx="0" cy="30" r="3"/></g>
+      <g class="movel tb3"><circle class="robo" cx="0" cy="0" r="30"/><circle class="tela" cx="0" cy="0" r="10"/></g>
+      <g class="movel go2"><path class="perna" d="M-30,8 V34 M-14,8 V34 M14,8 V34 M30,8 V34"/><rect class="robo" x="-42" y="-20" width="84" height="32" rx="12"/><rect class="robo" x="30" y="-34" width="26" height="22" rx="7"/></g>
+      <!-- passageiros -->
+      <g class="movel pa"><circle cx="0" cy="-30" r="15" class="pessoa"/><path class="pessoa" d="M-26,22 Q-26,-12 0,-12 Q26,-12 26,22 Z"/></g>
+      <g class="movel pb"><circle cx="0" cy="-30" r="15" class="pessoa"/><path class="pessoa" d="M-26,22 Q-26,-12 0,-12 Q26,-12 26,22 Z"/></g>
+      <g class="movel pc" style="transform: translate(300px, 290px)"><circle cx="0" cy="-30" r="15" class="pessoa"/><path class="pessoa" d="M-26,22 Q-26,-12 0,-12 Q26,-12 26,22 Z"/></g>
+      <!-- 1: pedidos -->
+      <g class="passo" data-passo="1" data-sai="3"><path class="balao" d="M740,165 h90 a22,22 0 0 1 22,22 v6 a22,22 0 0 1 -22,22 h-62 l-22,18 l4,-18 h-10 a22,22 0 0 1 -22,-22 v-6 a22,22 0 0 1 22,-22 Z"/><circle class="ponto" cx="760" cy="190" r="6"/><circle class="ponto" cx="785" cy="190" r="6"/><circle class="ponto" cx="810" cy="190" r="6"/><path class="balao" d="M1450,590 h90 a22,22 0 0 1 22,22 v6 a22,22 0 0 1 -22,22 h-62 l-22,18 l4,-18 h-10 a22,22 0 0 1 -22,-22 v-6 a22,22 0 0 1 22,-22 Z"/><circle class="ponto" cx="1470" cy="615" r="6"/><circle class="ponto" cx="1495" cy="615" r="6"/><circle class="ponto" cx="1520" cy="615" r="6"/><path class="balao" d="M340,165 h90 a22,22 0 0 1 22,22 v6 a22,22 0 0 1 -22,22 h-62 l-22,18 l4,-18 h-10 a22,22 0 0 1 -22,-22 v-6 a22,22 0 0 1 22,-22 Z"/><circle class="ponto" cx="360" cy="190" r="6"/><circle class="ponto" cx="385" cy="190" r="6"/><circle class="ponto" cx="410" cy="190" r="6"/></g>
+      <!-- 2: alocação -->
+      <g class="passo" data-passo="2" data-sai="3">
+        <path class="liga" d="M1395,250 Q1060,110 735,240"/>
+        <path class="liga" d="M270,755 Q850,885 1430,755"/>
+        <path class="liga" d="M200,250 Q240,215 280,245"/>
+      </g>
+      <!-- 3: tráfego: dois pares em sentidos opostos no corredor -->
+      <g class="passo" data-passo="3" data-sai="4"><circle class="alerta" cx="856" cy="620" r="32"/><text class="sinal" x="856" y="636" text-anchor="middle">!</text></g>
+      <!-- 4 e 5: o passageiro que ficou sozinho -->
+      <g class="passo" data-passo="4" data-sai="6"><text class="interroga" x="764" y="664" text-anchor="middle">?</text></g>
+      <!-- 5: escada interditada; o aviso vai só para o Go2 -->
+      <g class="passo" data-passo="5"><path class="xis" d="M612,478 L668,534 M668,478 L612,534"/></g>
+      <g class="passo" data-passo="5" data-sai="6"><path class="liga" d="M650,688 Q760,420 1010,330"/></g>
+      <!-- 6: o contexto do passageiro passa do Go2 para o TurtleBot 3 -->
+      <g class="passo" data-passo="6" data-sai="7">
+        <path class="liga" d="M1010,322 Q860,420 795,680"/>
+        <rect class="cartao" x="845" y="416" width="70" height="86" rx="8"/>
+        <path class="linha-cartao" d="M860,440 H900 M860,460 H900 M860,480 H888"/>
+      </g>
+      <!-- 7: a frota ligada como um atendente só -->
+      <g class="passo" data-passo="7"><path class="rede" d="M200,320 L750,700 M810,700 L1015,320 M205,280 Q620,170 1000,275"/></g>
+      </g>
+    </svg>
+    <div class="painel-d3">
+      <div class="etapa passo" data-passo="0" data-sai="1"><p class="rotulo-termo">FROTA</p><p class="frase-d3">Três corpos diferentes atendem a mesma estação.</p></div>
+      <div class="etapa passo" data-passo="1" data-sai="2"><p class="rotulo-termo">PEDIDOS</p><p class="frase-d3">Os pedidos chegam o tempo todo, de pessoas diferentes.</p></div>
+      <div class="etapa passo" data-passo="2" data-sai="3"><p class="rotulo-termo">ALOCAÇÃO</p><p class="frase-d3">Quem atende quem? O LLM entende o pedido; um algoritmo escolhe o robô.</p></div>
+      <div class="etapa passo" data-passo="3" data-sai="4"><p class="rotulo-termo">TRÁFEGO</p><p class="frase-d3">Robô e passageiro andam juntos. Dois pares travam no corredor.</p></div>
+      <div class="etapa passo" data-passo="4" data-sai="5"><p class="rotulo-termo">EMERGÊNCIA</p><p class="frase-d3">Alguém passa mal. Quem larga a condução? Quem fica com a vítima?</p></div>
+      <div class="etapa passo" data-passo="5" data-sai="6"><p class="rotulo-termo">CONHECIMENTO</p><p class="frase-d3">Escada interditada: o aviso só importa para quem sobe escada.</p></div>
+      <div class="etapa passo" data-passo="6" data-sai="7"><p class="rotulo-termo">CONTINUIDADE</p><p class="frase-d3">Outro robô assume o passageiro e recebe o contexto dele.</p></div>
+      <div class="etapa passo" data-passo="7"><p class="rotulo-termo">UM ATENDENTE</p><p class="frase-d3">Corpos diferentes, um atendente só.</p></div>
+      <div class="legenda-d3">
+        <p><svg viewBox="-30 -40 60 80"><rect class="robo" x="-24" y="-36" width="48" height="72" rx="9"/><rect class="tela" x="-16" y="-27" width="32" height="48" rx="3"/></svg>tablet</p>
+        <p><svg viewBox="-34 -34 68 68"><circle class="robo" r="30"/><circle class="tela" r="10"/></svg>TurtleBot 3</p>
+        <p><svg viewBox="-46 -38 106 76"><path class="perna" d="M-30,8 V34 M-14,8 V34 M14,8 V34 M30,8 V34"/><rect class="robo" x="-42" y="-20" width="84" height="32" rx="12"/><rect class="robo" x="30" y="-34" width="26" height="22" rx="7"/></svg>Go2</p>
+        <p><svg viewBox="-30 -48 60 74"><circle cx="0" cy="-30" r="15" class="pessoa"/><path class="pessoa" d="M-26,22 Q-26,-12 0,-12 Q26,-12 26,22 Z"/></svg>passageiro</p>
+      </div>
+    </div>
+    <aside class="notas">Desafio 3, sem texto: sistemas multirrobô. Passo 0: a estação vista como um grafo, com o mezanino em cima, a plataforma embaixo, escada e elevador ligando os dois; e uma frota de três corpos diferentes: o tablet parado na entrada (conversa, mas não anda), o TurtleBot 3 (só anda no plano) e o Go2 (sobe degrau). Para o passageiro, os três deveriam funcionar como um atendente só. Passo 1: os pedidos chegam o tempo todo, de pessoas diferentes; quase toda a literatura de vários robôs com LLM recebe uma ordem só e não tem gente no caminho. Passo 2, alocação: quem atende quem? O LLM entende o pedido e um algoritmo clássico de grafos (emparelhamento, algoritmo húngaro) decide qual robô vai; comparar com o LLM decidindo tudo. Passo 3, tráfego: conduzindo, robô e pessoa viram um bloco só, maior e mais lento; dois pares em sentidos opostos travam no corredor estreito. Planejar o par como um agente só e reservar o corredor resolve? Passo 4, emergência: alguém passa mal no banheiro com todos ocupados. O Go2 larga quem conduzia e vai até a vítima; a SSO é chamada. E a pessoa que ficou sozinha no corredor? Qual regra socorre mais rápido sem abandonar ninguém? Passo 5, conhecimento: o TurtleBot vê a escada interditada e avisa só o Go2, o único que a usaria. Cada robô recebe só o aviso que muda a rota dele. Passo 6, continuidade: o TurtleBot assume a pessoa que ficou sozinha, e o Go2 passa para ele o contexto (quem é, para onde vai, o que já foi dito), para ninguém perguntar tudo de novo. Que informação passar, e em que formato? Passo 7: a frota ligada, um atendente só. A pergunta: como dividir o atendimento entre corpos diferentes para atender mais rápido e com mais segurança que robôs independentes, usando o LLM só onde ele ajuda? O PDF completo, com as cinco lacunas, está no site.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="2">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
     <aside class="notas">Agenda: sprint 2.</aside>
   </section>
 
@@ -142,7 +503,7 @@
     <aside class="notas">Artefato de documentação (peso 3). A faixa 9 a 10 pede: refletir a implementação de forma clara e concisa (interface, serviço de rotas, navegação, algoritmo de busca escolhido, interface de comunicação com o robô, evidências); um manual que alguém de fora executa na primeira tentativa; separar o que foi entregue, as limitações e os próximos passos. Novidade desta sprint: registrar o acompanhamento do contrato social na retrospectiva do grupo, ou seja, o que foi revisto e o que mudou. A ficha de hoje é um bom ponto de partida para essa conversa.</aside>
   </section>
 
-  <section class="slide agenda curta" data-agora="2">
+  <section class="slide agenda curta" data-agora="3">
     <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
     <aside class="notas">Agenda: encontros da sprint 2.</aside>
   </section>
@@ -201,7 +562,7 @@
 
 /* Fonte única da agenda: todos os slides .agenda são montados daqui. */
 (function () {
-  const AGENDA = ["Retrospectiva da Sprint 1", "Sprint 2", "Encontros da sprint"];
+  const AGENDA = ["Retrospectiva da Sprint 1", "Revisão e desafios", "Sprint 2", "Encontros da sprint"];
   const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
   document.querySelectorAll(".slide.agenda").forEach((sec) => {
     const agora = parseInt(sec.dataset.agora, 10);
