@@ -63,6 +63,13 @@
       "titulo": "Planning da Sprint 3",
       "subtitulo": "Como está o nosso time?, desafios, o assistente com LLM e o robô físico",
       "apresentacao": "apresentacao/dist/index.html",
+      "roteiros": [
+        {
+          "rotulo": "Questionário: Como está o nosso time?",
+          "tipo": "formulário",
+          "link": "https://docs.google.com/forms/d/e/1FAIpQLScMsoOQ5iQiNTmxf8d2FNYeIAJ1eaMpq8i0egXQHv298WLVzA/viewform"
+        }
+      ],
       "referencias": [
         {
           "rotulo": "Is the Agent Harness Dead? (Jediah Katz, AI Engineer NYC 2026)",
