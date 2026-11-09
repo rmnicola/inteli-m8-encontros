@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M8 EC - Planning da Sprint 3</title>
+<link rel="stylesheet" href="../../.design-system/css/inteli-exec.css">
+<style>
+/* Estilos sob medida deste deck. Cada slide sob medida tem um id e só se estiliza por ele. */
+.slide.capa .titulo-capa { white-space: nowrap; font-size: 72px; }
+
+/* #fisico: robô físico na sprint 3 e na sprint 4, duas colunas */
+#fisico .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+#fisico .colunas { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 240px; bottom: 200px;
+  display: flex; gap: 40px; align-items: stretch; }
+#fisico .coluna { flex: 1; background: var(--branco); border-radius: 24px; padding: 48px 40px 56px; border-top: 14px solid var(--cor); }
+#fisico .coluna.s3 { --cor: var(--verde); }
+#fisico .coluna.s4x { --cor: var(--coral); }
+#fisico .coluna.s4 { --cor: var(--roxo); }
+#fisico .coluna h2 { font-family: var(--f-capitulo); font-size: 64px; line-height: 1.05; margin-bottom: 24px; white-space: nowrap; }
+#fisico .coluna p { font-size: 36px; line-height: 1.3; }
+
+/* #ficha: a ficha como recorte de papel, à esquerda; à direita, o QR code para baixá-la */
+#ficha .recorte { position: absolute; left: 170px; top: 50px; width: 560px; transform: rotate(-2deg);
+  filter: drop-shadow(0 18px 36px rgba(46, 38, 64, .28)); }
+#ficha .recorte img { display: block; width: 100%; height: auto;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 98%, 87% 94.5%, 79% 99%, 71% 95.5%, 63% 98.5%, 55% 94.5%, 47% 99%, 39% 95.5%, 31% 98.5%, 23% 94.5%, 15% 99%, 7% 95.5%, 0 98.5%); }
+#ficha .acesso { position: absolute; left: 900px; right: var(--margem-x); top: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: 36px; }
+#ficha .acesso .qr { width: 300px; height: 300px; background: var(--branco); padding: 24px; border-radius: 16px; }
+#ficha .acesso .qr img { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+#ficha .acesso .passos { font-size: 40px; font-weight: 700; line-height: 1.3; }
+
+/* .recorte-doc com .folha: o card de um artefato (HTML como no Adalove) recortado, com a parte que importa nítida e o resto desfocado */
+.recorte-doc { --fundo: var(--cinza-medio); }
+.recorte-doc .recorte { position: absolute; left: 260px; top: 70px; width: 1080px; transform: rotate(-2deg);
+  filter: drop-shadow(0 18px 36px rgba(46, 38, 64, .28)); }
+.recorte-doc .folha.objeto { position: static; box-shadow: none; }
+.recorte-doc .folha { background: #ffffff; color: #2e2640; font-family: var(--f-texto); font-size: 24px; line-height: 1.45;
+  padding: 50px 70px 80px; max-height: 760px; overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 98%, 87% 94.5%, 79% 99%, 71% 95.5%, 63% 98.5%, 55% 94.5%, 47% 99%, 39% 95.5%, 31% 98.5%, 23% 94.5%, 15% 99%, 7% 95.5%, 0 98.5%); }
+.recorte-doc .folha h2 { font-size: 40px; font-weight: 700; line-height: 1.15; margin-bottom: 18px; }
+.recorte-doc .folha h3 { font-size: 28px; font-weight: 700; margin: 20px 0 6px; }
+.recorte-doc .folha p { margin-bottom: 10px; }
+.recorte-doc .folha .desfocado { filter: blur(3px); opacity: .6; }
+
+/* .semana: tabela dos encontros de uma semana */
+.semana .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.semana table { position: absolute; left: var(--margem-x); width: 1360px; top: 200px; border-collapse: collapse; font-size: 30px; }
+.semana td { padding: 14px 18px; border-top: 2px solid var(--cinza-medio); vertical-align: middle; }
+.semana tr:first-child td { border-top: 0; }
+.semana .dia { font-family: var(--f-destaque); font-weight: 700; width: 210px; white-space: nowrap; }
+.semana .enc { font-weight: 700; }
+.semana .eixo { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; text-transform: uppercase; color: var(--destaque); width: 260px; text-align: right; }
+.semana .prof { width: 90px; }
+.semana .prof img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; display: block; }
+.semana tr.trocada td { background: var(--coral-fundo, #fff0ef); }
+.semana tr.trocada td:first-child { border-left: 12px solid var(--coral); }
+.semana .troca { display: inline-block; margin-left: 14px; padding: 2px 14px; border-radius: 999px; background: var(--roxo); color: var(--branco); font-family: var(--f-destaque); font-weight: 700; font-size: 28px; text-transform: uppercase; vertical-align: middle; }
+.semana .legenda-troca { position: absolute; left: var(--margem-x); top: 790px; font-size: 30px; font-weight: 700; color: var(--roxo); }
+.semana tr.feriado td { color: var(--texto-suave); font-weight: 400; }
+
+/* .linha-sprints: linha do tempo das sprints, a mesma do deck de apresentação do módulo */
+.linha-sprints .trilho { position: absolute; top: 380px; left: 110px; width: 1380px; height: 3px; background: var(--roxo); }
+.linha-sprints .marco { position: absolute; top: 260px; width: 260px; margin-left: -130px; height: 200px; text-align: center; }
+.linha-sprints .marco .nome { position: absolute; top: 30px; left: 0; right: 0; font-family: var(--f-destaque); font-size: 34px; color: var(--texto-suave); }
+.linha-sprints .marco .ponto { position: absolute; top: 108px; left: 50%; width: 26px; height: 26px; margin-left: -13px;
+  border-radius: 50%; background: var(--fundo); border: 4px solid var(--coral); }
+.linha-sprints .marco.feito .ponto { background: var(--coral); }
+.linha-sprints .marco.atual .nome { color: var(--texto); font-weight: 700; }
+.linha-sprints .marco.atual .ponto { width: 40px; height: 40px; margin-left: -20px; top: 101px; }
+.linha-sprints .frase { position: absolute; top: 500px; left: var(--margem-x); right: var(--margem-x); text-align: center;
+  font-weight: 700; font-size: 56px; line-height: 1.15; }
+/* .fluxo-detalhes: fluxograma de etapas (passo 0); no passo k, a etapa k fica em destaque e o seu detalhe aparece embaixo.
+   O número de etapas vem de --n no style do slide. Usado em #revisao e #validar-desafio. */
+.fluxo-detalhes .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+.fluxo-detalhes .fluxo { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 200px;
+  display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 48px; }
+.fluxo-detalhes .no { position: relative; background: var(--branco); border-radius: 18px; padding: 22px 14px; text-align: center;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 30px; line-height: 1.15; transition: background .3s, color .3s; }
+.fluxo-detalhes .no + .no::before { content: ""; position: absolute; left: -40px; top: 50%; margin-top: -11px; border: 11px solid transparent; border-left: 20px solid var(--coral); border-right: 0; }
+.fluxo-detalhes .detalhe-r { position: absolute; left: var(--margem-x); right: var(--margem-x); top: 360px; display: none;
+  background: var(--branco); border-radius: 24px; padding: 44px 56px; flex-direction: column; gap: 22px; }
+.fluxo-detalhes .detalhe-r .quando { font-family: var(--f-destaque); font-weight: 700; font-size: 30px; text-transform: uppercase; color: var(--destaque); }
+.fluxo-detalhes .detalhe-r .texto-r { font-size: 40px; line-height: 1.3; }
+.fluxo-detalhes .detalhe-r .saidas { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.fluxo-detalhes .detalhe-r .saida { font-family: var(--f-destaque); font-weight: 700; font-size: 28px; padding: 12px 22px; border-radius: 999px; background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="1"] .no.n1 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="1"] .detalhe-r.d1 { display: flex; }
+.fluxo-detalhes[data-estado="2"] .no.n2 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="2"] .detalhe-r.d2 { display: flex; }
+.fluxo-detalhes[data-estado="3"] .no.n3 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="3"] .detalhe-r.d3 { display: flex; }
+.fluxo-detalhes[data-estado="4"] .no.n4 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="4"] .detalhe-r.d4 { display: flex; }
+.fluxo-detalhes[data-estado="5"] .no.n5 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="5"] .detalhe-r.d5 { display: flex; }
+.fluxo-detalhes[data-estado="6"] .no.n6 { background: var(--roxo); color: var(--branco); }
+.fluxo-detalhes[data-estado="6"] .detalhe-r.d6 { display: flex; }
+
+/* #harness: o diagrama do harness do agente (Jediah Katz, AI Engineer NYC 2026) redesenhado na paleta Inteli.
+   Passo 0: só o modelo; 1: o harness e a camada de contexto e orquestração; 2: o runtime; 3: o que fica fora. */
+#harness .titulo { position: absolute; left: var(--margem-x); top: 64px; }
+#harness .caixa { position: absolute; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; }
+#harness .externo { width: 240px; height: 66px; border: 3px solid var(--roxo); background: var(--branco);
+  align-items: center; font-size: 30px; font-weight: 700; }
+#harness .amb { left: 680px; top: 160px; }
+#harness .con { left: 680px; top: 790px; }
+#harness .inf { left: 120px; top: 476px; }
+#harness .app { left: 1240px; top: 476px; }
+#harness .moldura-h { left: 420px; top: 276px; width: 760px; height: 466px; border: 3px solid var(--roxo); background: var(--branco);
+  justify-content: flex-start; padding: 10px 30px; }
+#harness .moldura-h .nome { font-size: 30px; font-weight: 800; }
+#harness .ctx { left: 450px; top: 330px; width: 700px; height: 250px; background: var(--roxo); color: var(--branco);
+  border: 3px dashed var(--lilas); justify-content: flex-start; padding: 14px 28px; }
+#harness .ctx .nome, #harness .rt .nome { font-size: 30px; font-weight: 800; }
+#harness .ctx .itens, #harness .rt .itens { font-size: 28px; line-height: 1.25; margin-top: 2px; }
+#harness .ctx .itens { color: var(--cinza-medio); }
+#harness .modelo { left: 650px; top: 478px; width: 300px; height: 86px; background: var(--lilas); color: var(--roxo);
+  align-items: center; font-size: 40px; font-weight: 800; box-shadow: 10px 10px 0 var(--coral); }
+#harness .rt { left: 450px; top: 594px; width: 700px; height: 134px; background: var(--cinza-claro); color: var(--texto-suave);
+  padding: 10px 28px; }
+#harness svg.setas { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; pointer-events: none; }
+#harness svg.setas path { stroke: var(--roxo); stroke-width: 4; fill: none; }
+#harness .credito { position: absolute; left: var(--margem-x); bottom: 40px; font-size: 28px; color: var(--texto-suave); }
+
+/* #time: o formulário como objeto (cartão no estilo Google Forms), à esquerda; à direita, o QR code */
+#time .form { position: absolute; left: 140px; top: 200px; width: 680px; transform: rotate(-2deg); background: #f0ebf8; padding: 20px; border-radius: 12px;
+  filter: drop-shadow(0 18px 36px rgba(46, 38, 64, .28)); font-family: Roboto, Arial, sans-serif; color: #202124; }
+#time .form .cab { background: #fff; border-radius: 10px; border-top: 12px solid var(--roxo); padding: 26px 32px; margin-bottom: 16px; }
+#time .form .cab h3 { font-size: 30px; font-weight: 400; line-height: 1.25; }
+#time .form .cab p { font-size: 16px; color: #5f6368; margin-top: 10px; line-height: 1.4; }
+#time .form .q { background: #fff; border-radius: 10px; padding: 26px 32px; }
+#time .form .q p { font-size: 18px; line-height: 1.4; }
+#time .form .escala { display: flex; justify-content: space-around; margin-top: 22px; font-size: 15px; color: #5f6368; text-align: center; }
+#time .form .escala span::before { content: ""; display: block; width: 22px; height: 22px; margin: 0 auto 8px; border: 2px solid #5f6368; border-radius: 50%; }
+#time .acesso { position: absolute; left: 900px; right: var(--margem-x); top: 0; bottom: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: 36px; }
+#time .acesso .qr { width: 300px; height: 300px; background: var(--branco); padding: 24px; border-radius: 16px; }
+#time .acesso .qr img { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+#time .acesso .passos { font-size: 40px; font-weight: 700; line-height: 1.3; }
+</style>
+</head>
+<body>
+<main class="deck">
+
+  <section class="slide capa sem-numero">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="conteudo">
+      <h1 class="titulo-capa">M8 EC - Planning da Sprint 3</h1>
+      <p class="autor">Prof. Nicola</p>
+    </div>
+    <aside class="notas">Planning da Sprint 3 (09/11). Primeiro, um questionário sobre como o time está funcionando (no lugar da ficha de retrospectiva desta vez); depois um lembrete dos desafios, o que a sprint 3 pede e os encontros até a review de 19/11.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="0">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: como está o nosso time? Nesta sprint, a retrospectiva é o questionário das cinco disfunções de um time; o Que bom, Que pena e Que tal volta na sprint 4.</aside>
+  </section>
+
+  <section class="slide" id="time" data-modelo="ficha-com-qr" data-max-palavras="90">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <div class="form objeto" aria-hidden="true">
+      <div class="cab"><h3>Como está o nosso time?</h3><p>Ninguém é identificado pelo nome. Os resultados são analisados por grupo e não valem nota.</p></div>
+      <div class="q"><p>Os integrantes apontam uns aos outros falhas ou atitudes que atrapalham o grupo.</p>
+        <div class="escala"><span>Raramente</span><span>Às vezes</span><span>Frequentemente</span></div></div>
+    </div>
+    <div class="acesso">
+      <div class="qr"><img src="assets/qr-time.png" alt="QR code do formulário"></div>
+      <p class="passos">Cada um responde sozinho. Guarde o seu código: ele volta na semana 10.</p>
+    </div>
+    <aside class="notas">Questionário "Como está o nosso time?", preparado com o Filipe a partir das cinco disfunções de um time (Lencioni): ausência de confiança, medo de conflito, falta de comprometimento, fuga da responsabilização e desatenção aos resultados. São 15 afirmações sobre o que de fato aconteceu no grupo, numa escala de três níveis (raramente, às vezes, frequentemente), a mesma do questionário original, mais duas perguntas de fechamento (o momento do grupo e o maior desafio). Individual e anônimo, não vale nota; os resultados são analisados por grupo. O código pessoal (por exemplo, as duas primeiras letras do nome da mãe mais o dia do nascimento) serve só para comparar a resposta de hoje com a da semana 10: usar o mesmo código lá. Responder pensando no que aconteceu, não no que deveria acontecer. Tempo sugerido: 10 minutos. A retrospectiva com Que bom, Que pena e Que tal volta na planning da sprint 4.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="1">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: desafios.</aside>
+  </section>
+
+  <section class="slide fluxo-detalhes" id="validar-desafio" data-modelo="fluxo-com-detalhes" data-max-palavras="170" style="--n: 6">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Como validar um desafio</h2>
+    <div class="fluxo"><div class="no n1">Proposta</div><div class="no n2">Short paper</div><div class="no n3">Entrega</div><div class="no n4">Análise</div><div class="no n5">Arguição</div><div class="no n6">Aprovação</div></div>
+    <div class="detalhe-r d1"><p class="quando">Antes de começar</p><p class="texto-r">Escolha um desafio e me avise que vai trabalhar nele, contando a estratégia de solução que pretende seguir. Posso marcar uma mentoria para ajudar.</p></div>
+    <div class="detalhe-r d2"><p class="quando">Durante o desenvolvimento</p><p class="texto-r">Desenvolva a solução e escreva o resultado como short paper, no template que vou fornecer.</p></div>
+    <div class="detalhe-r d3"><p class="quando">Pelo Slack</p><p class="texto-r">Envie o short paper com uma mensagem dizendo por que o trabalho é uma inovação e onde você acha que podemos publicá-lo.</p></div>
+    <div class="detalhe-r d4"><p class="quando">Mérito da entrega</p><p class="texto-r">Avalio o mérito e decido o próximo passo. Rejeição e mentoria permitem reentrega.</p><div class="saidas"><p class="saida">Está boa → arguição</p><p class="saida">Abaixo do desafio → rejeição</p><p class="saida">Falta refinar → mentoria</p></div></div>
+    <div class="detalhe-r d5"><p class="quando">Presencial</p><p class="texto-r">Faço perguntas técnicas sobre o seu trabalho e sobre os conteúdos do módulo. Se eu sair insatisfeito, nego o pedido ou marco uma nova data para você se preparar melhor.</p></div>
+    <div class="detalhe-r d6"><p class="quando">Desafio aprovado</p><p class="texto-r">Você escolhe as duas notas que serão alteradas. O trabalho provavelmente é publicável: vamos atrás da publicação, que também rende horas complementares.</p></div>
+    <aside class="notas">Os três desafios apresentados na planning da sprint 2 continuam abertos (os PDFs estão na página daquele encontro no site). Lembrete do fluxo, sem entrar em cada etapa: proposta com a estratégia de solução, short paper no template, entrega pelo Slack, análise do mérito, arguição e aprovação. Quem já está trabalhando num desafio e ainda não me avisou, avise; quem quiser mentoria, peça.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="2">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: sprint 3.</aside>
+  </section>
+
+  <section class="slide linha-sprints" id="roadmap-sprint-3" data-modelo="linha-do-tempo" data-sprint="3">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Sprint 3, com review em 19/11: o FAQ vira um assistente com LLM, base de contexto da CPTM e ferramentas; fluxos de emergência; harness de testes; e o robô navegando no mapa simulado de uma estação da CPTM e, fisicamente, em ambiente real.</aside>
+  </section>
+
+  <section class="slide recorte-doc" id="artefato-implementacao" data-modelo="recorte-de-jornal">
+    <div class="recorte"><div class="folha objeto">
+      <h2>Artefato de implementação</h2>
+      <h3>Peso</h3><p>6 pontos.</p>
+      <h3>Escopo</h3>
+      <p>O grupo deve evoluir o FAQ para um assistente baseado em modelo de linguagem pré-treinado, apoiado por uma base de contexto com informações da CPTM, como trajetos, baldeações, serviços da estação e acessibilidade. O assistente deve usar ferramentas (funções agênticas) para resolver as dúvidas do usuário, incluindo, no mínimo, a consulta de rotas implementada na Sprint 2 e a solicitação de condução até um ponto de interesse.</p>
+      <div class="desfocado">
+        <p>O assistente deve reconhecer os fluxos críticos e de emergência previstos no TAPI (por exemplo, menções a importunação sexual ou mal súbito) e as perguntas que não compreende, encaminhando o usuário à SSO da estação. O grupo deve construir um conjunto de testes (harness) que permita verificar o comportamento do assistente em perguntas representativas, incluindo os fluxos críticos.</p>
+        <p>Na navegação, o grupo deve construir em simulação um ambiente que represente uma das estações de interesse da CPTM, gerar o seu mapa, definir nele os pontos de interesse e demonstrar o robô navegando até eles a partir de solicitações feitas ao assistente.</p>
+      </div>
+    </div></div>
+    <aside class="notas">Artefato de implementação (peso 6), texto completo no card do Adalove. O FAQ fixo da sprint 2 vira um assistente com LLM pré-treinado, apoiado numa base de contexto da CPTM (trajetos, baldeações, serviços da estação, acessibilidade) e com ferramentas: no mínimo a consulta de rotas da sprint 2 e o pedido de condução até um ponto de interesse. Fluxos críticos do TAPI (importunação sexual, mal súbito) e perguntas que ele não entende vão para a SSO. Harness de testes com perguntas representativas, inclusive os fluxos críticos; o grupo define e justifica como avaliar. Navegação: estação da CPTM simulada, mapa gerado, pontos de interesse definidos, robô indo até eles a pedido do assistente. Novo: a implementação e a integração física do robô são obrigatórias, e o robô físico navega em ambiente real, a partir das mesmas solicitações ao assistente e pela interface da sprint 2; a sprint 4 trata da modularidade em simulação, com demonstração em robô físico opcional. Na faixa 9 a 10: resolve as dúvidas de forma consistente, trata os fluxos críticos, testes coerentes com os critérios do grupo, robô navegando na simulação e fisicamente pela mesma interface, e diferenças e limitações explícitas.</aside>
+  </section>
+
+  <!-- FLUXO-S3 -->
+
+  <section class="slide" id="fisico" data-modelo="duas-colunas" data-max-palavras="50">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Robô físico</h2>
+    <div class="colunas">
+      <div class="coluna s3"><h2>Sprint 3</h2><p>Obrigatório: implementar e integrar o robô físico, navegando em ambiente real a partir das mesmas solicitações ao assistente.</p></div>
+      <div class="coluna s4"><h2>Sprint 4</h2><p>Modularidade em simulação. Mostrar também no robô físico é opcional.</p></div>
+    </div>
+    <aside class="notas">Mudança de escopo, já refletida nos cards do Adalove. Sprint 3: além da simulação, o grupo implementa e integra fisicamente o robô, que navega em ambiente real até pontos de interesse pedidos ao assistente, pela mesma interface de comunicação da sprint 2. Sprint 4: a independência da plataforma é demonstrada em simulação (tablet sem robô e três plataformas simuladas); levar a solução também a um robô físico é opcional.</aside>
+  </section>
+
+  <section class="slide" id="harness" data-modelo="diagrama-com-rotulos" data-max-palavras="45">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Harness do agente</h2>
+    <div class="caixa moldura-h passo" data-passo="1"><p class="nome">Harness</p></div>
+    <div class="caixa ctx passo" data-passo="1"><p class="nome">Contexto e orquestração</p><p class="itens">prompts · ferramentas · memória<br>compactação · roteamento · guardrails</p></div>
+    <div class="caixa modelo passo" data-passo="0">Modelo</div>
+    <div class="caixa rt passo" data-passo="2"><p class="nome">Runtime</p><p class="itens">loop · estado · transporte<br>autenticação · gatilhos · observabilidade</p></div>
+    <svg class="setas passo" data-passo="3" viewBox="0 0 1600 900" aria-hidden="true">
+      <defs><marker id="ponta-h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.5" markerHeight="3.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--roxo);stroke:none"/></marker></defs>
+      <path d="M800,232 L800,270" marker-start="url(#ponta-h)" marker-end="url(#ponta-h)"/>
+      <path d="M800,748 L800,786" marker-start="url(#ponta-h)" marker-end="url(#ponta-h)"/>
+      <path d="M364,509 L416,509" marker-start="url(#ponta-h)" marker-end="url(#ponta-h)"/>
+      <path d="M1184,509 L1236,509" marker-start="url(#ponta-h)" marker-end="url(#ponta-h)"/>
+    </svg>
+    <div class="caixa externo amb passo" data-passo="3">Ambientes</div>
+    <div class="caixa externo con passo" data-passo="3">Conectores</div>
+    <div class="caixa externo inf passo" data-passo="3">Inferência</div>
+    <div class="caixa externo app passo" data-passo="3">Apps</div>
+    <p class="credito">Jediah Katz · AI Engineer NYC 2026</p>
+    <aside class="notas">Diagrama do talk "Is the Agent Harness Dead?" (Jediah Katz, AI Engineer NYC 2026; link na página deste encontro, junto com um guia por escrito). Passo 0: o modelo pré-treinado sozinho só gera texto. Passo 1: o harness é tudo o que fica em volta dele; a camada de contexto e orquestração decide o que o modelo vê e o que ele pode fazer: o prompt de sistema, a base de contexto da CPTM, as ferramentas (consulta de rotas e "me leve até"), a memória da conversa, a compactação do histórico, a escolha de modelo e os guardrails, que no projeto incluem os fluxos críticos encaminhados à SSO. Passo 2: o runtime é a engenharia de software: o loop que chama o modelo e executa as ferramentas, o estado da sessão, o transporte, a autenticação, o que dispara o agente e a observabilidade (logs e traces, matéria-prima do harness de testes). Passo 3: o que fica fora: inferência (onde o modelo roda: API ou local), apps (a interface no tablet), ambientes (a simulação da estação) e conectores (a ponte com o ROS 2 e o Nav2). O "harness" do artefato é o conjunto de testes; este é o harness do agente, e os dois andam juntos: os testes verificam o comportamento do agente que o harness monta.</aside>
+  </section>
+
+  <!-- TESTES -->
+
+  <section class="slide recorte-doc" id="artefato-documentacao" data-modelo="recorte-de-jornal">
+    <div class="recorte"><div class="folha objeto">
+      <h2>Artefato de documentação</h2>
+      <h3>Peso</h3><p>3 pontos.</p>
+      <h3>Critério de qualidade · [9,0 - 10,0]</h3>
+      <p>A documentação explica de forma clara e concisa a arquitetura do assistente, a origem e a estrutura da base de contexto, as ferramentas disponíveis, o tratamento dos fluxos críticos, o conjunto de testes com seus critérios e resultados, a construção do mapa da estação e a integração do robô físico.</p>
+      <div class="desfocado">
+        <p>O manual permite que uma pessoa de fora do grupo execute o sistema na primeira tentativa, e a documentação diferencia funcionalidades entregues, limitações e próximos passos. Registra o acompanhamento do contrato social na retrospectiva da sprint: o que foi revisto e o que mudou.</p>
+      </div>
+    </div></div>
+    <aside class="notas">Artefato de documentação (peso 3). O que é novo na faixa 9 a 10: arquitetura do assistente, origem e estrutura da base de contexto, ferramentas, tratamento dos fluxos críticos, harness com critérios e resultados, a construção do mapa da estação e a integração do robô físico. Continuam valendo o manual que alguém de fora executa na primeira tentativa, a separação entre entregue, limitações e próximos passos, e o registro do acompanhamento do contrato social na retrospectiva.</aside>
+  </section>
+
+  <section class="slide agenda curta" data-agora="3">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <aside class="notas">Agenda: encontros da sprint 3.</aside>
+  </section>
+
+  <section class="slide semana" id="semana-5" data-modelo="tabela-da-semana" data-max-palavras="55">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Semana 5</h2>
+    <table>
+<tr><td class="dia">seg 09/11</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Planning da Sprint 3</td><td class="eixo">Orientação</td></tr>
+<tr class="trocada"><td class="dia">ter 10/11<span class="troca">troca</span></td><td class="prof"><img src="assets/equipe/jefferson.jpg" alt=""></td><td class="enc">Redes recorrentes: RNN, LSTM e GRU</td><td class="eixo">Computação</td></tr>
+<tr class="trocada"><td class="dia">qua 11/11<span class="troca">troca</span></td><td class="prof"><img src="assets/equipe/filipe.jpg" alt=""></td><td class="enc">Team building: rotinas colaborativas</td><td class="eixo">Liderança</td></tr>
+<tr class="trocada"><td class="dia">qui 12/11<span class="troca">troca</span></td><td class="prof"><img src="assets/equipe/rafael.jpg" alt=""></td><td class="enc">Consumidor figital e omnichannel</td><td class="eixo">Negócios</td></tr>
+<tr><td class="dia">sex 13/11</td><td class="prof"><img src="assets/equipe/jefferson.jpg" alt=""></td><td class="enc">Seq2seq e mecanismo de atenção</td><td class="eixo">Computação</td></tr>
+    </table>
+    <p class="legenda-troca">Marcadas: aulas que trocaram de dia.</p>
+    <aside class="notas">Semana 5 (09 a 13/11), com a troca de aulas combinada entre os professores: Computação na terça, Liderança na quarta e Negócios na quinta. Terça: Redes neurais recorrentes, RNN, LSTM e GRU (Jefferson), com autoestudo no Learning Deep Learning e o diário de aprendizado. Sexta: Seq2seq e mecanismo de atenção (Jefferson), o caminho até o transformer que está por trás do LLM do assistente desta sprint.</aside>
+  </section>
+
+  <section class="slide semana" id="semana-6" data-modelo="tabela-da-semana" data-max-palavras="50">
+    <img class="logo" src="../../.design-system/assets/img/logo-inteli-escuro-coral.png" alt="inteli">
+    <h2 class="titulo">Semana 6</h2>
+    <table>
+<tr><td class="dia">seg 16/11</td><td class="prof"><img src="assets/equipe/fabiana.jpg" alt=""></td><td class="enc">Pose, frames e odometria</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">ter 17/11</td><td class="prof"><img src="assets/equipe/fabiana.jpg" alt=""></td><td class="enc">Representação do ambiente</td><td class="eixo">Computação</td></tr>
+<tr><td class="dia">qua 18/11</td><td class="prof"><img src="assets/equipe/diogo.jpg" alt=""></td><td class="enc">A matemática do backpropagation</td><td class="eixo">Matemática</td></tr>
+<tr><td class="dia">qui 19/11</td><td class="prof"><img src="assets/equipe/nicola.jpg" alt=""></td><td class="enc">Entrega da Sprint 3</td><td class="eixo">Orientação</td></tr>
+<tr class="feriado"><td class="dia">sex 20/11</td><td class="prof"></td><td class="enc">Feriado</td><td class="eixo"></td></tr>
+    </table>
+    <aside class="notas">Semana 6 (16 a 20/11): sexta é feriado, então a review com o parceiro é na quinta, 19/11. Segunda: Pose, frames e odometria (Fabiana). Terça: Representação do ambiente (Fabiana): occupancy grid, mapas topológicos e semânticos, que conversa direto com o mapa da estação que o grupo constrói nesta sprint.</aside>
+  </section>
+
+  <!-- PRAZOS -->
+
+</main>
+<script>
+
+/* Fonte única do roadmap: a frase de cada sprint (a mesma do deck de apresentação do módulo). */
+(function () {
+  const SPRINTS = [
+    "Definição do problema e proposta da solução",
+    "FAQ e integração com robô simulado",
+    "Assistente com IA e mapa da estação",
+    "Voz e troca de plataforma robótica",
+    "Validação com usuários e versão final",
+  ];
+  const x = (i) => 250 + i * 275;
+  document.querySelectorAll(".slide.linha-sprints").forEach((sec) => {
+    const atual = parseInt(sec.dataset.sprint, 10);
+    sec.insertAdjacentHTML("beforeend", '<div class="trilho"></div>');
+    SPRINTS.forEach((_, i) => {
+      const n = i + 1;
+      sec.insertAdjacentHTML("beforeend",
+        `<div class="marco${n <= atual ? " feito" : ""}${n === atual ? " atual" : ""}" style="left:${x(i)}px">` +
+        `<p class="nome">Sprint ${n}</p><span class="ponto"></span></div>`);
+    });
+    sec.insertAdjacentHTML("beforeend", `<p class="frase">${SPRINTS[atual - 1]}</p>`);
+  });
+})();
+
+/* Fonte única da agenda: todos os slides .agenda são montados daqui. */
+(function () {
+  const AGENDA = ["Como está o nosso time?", "Desafios", "Sprint 3", "Encontros da sprint"];
+  const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; };
+  document.querySelectorAll(".slide.agenda").forEach((sec) => {
+    const agora = parseInt(sec.dataset.agora, 10);
+    const itens = h("div", "itens");
+    itens.append(h("p", "rotulo-agenda", "Agenda"));
+    AGENDA.forEach((t, i) => {
+      const p = h("p", "item" + (i < agora ? " passou" : i === agora ? " agora" : ""));
+      p.append(h("span", "marcador", String(i + 1).padStart(2, "0")), document.createTextNode(t));
+      itens.append(p);
+    });
+    sec.append(itens);
+  });
+})();
+</script>
+<script src="../../.design-system/js/deck.js"></script>
+</body>
+</html>

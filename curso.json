@@ -55,6 +55,31 @@
           "arquivo": "desafios/desafio-3-frota.pdf"
         }
       ]
+    },
+    {
+      "slug": "planning-da-sprint-3",
+      "pasta": "planning-da-sprint-3",
+      "data": "2026-11-09",
+      "titulo": "Planning da Sprint 3",
+      "subtitulo": "Como está o nosso time?, desafios, o assistente com LLM e o robô físico",
+      "apresentacao": "apresentacao/dist/index.html",
+      "referencias": [
+        {
+          "rotulo": "Is the Agent Harness Dead? (Jediah Katz, AI Engineer NYC 2026)",
+          "tipo": "vídeo",
+          "link": "https://www.youtube.com/watch?v=7Y4sbZgBdnc"
+        },
+        {
+          "rotulo": "Agent Harness Engineering Guide (DataCamp): como construir um harness, passo a passo",
+          "tipo": "guia",
+          "link": "https://www.datacamp.com/tutorial/agent-harness-engineering"
+        },
+        {
+          "rotulo": "How to build a better agent harness with traces and evals (Arize): como testar e melhorar",
+          "tipo": "guia",
+          "link": "https://arize.com/blog/improve-ai-agents-traces-evals-harness/"
+        }
+      ]
     }
   ]
 }
